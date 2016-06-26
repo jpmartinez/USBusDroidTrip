@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.TicketOptionsActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:weightSum="1">
+
+        <ImageButton
+            android:layout_width="126dp"
+            android:layout_height="126dp"
+            android:id="@+id/scanQRBtn"
+            android:src="@drawable/scan_qr"
+            android:clickable="true"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_horizontal"
+            android:background="@null" />
+
+        <ImageButton
+            android:layout_width="126dp"
+            android:layout_height="126dp"
+            android:id="@+id/newTicketBtn"
+            android:src="@drawable/new_ticket"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:layout_marginTop="10dp" />
+
+        <ImageButton
+            android:layout_width="126dp"
+            android:layout_height="126dp"
+            android:id="@+id/cancelTicketBtn"
+            android:src="@drawable/cancel_ticket"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:layout_marginTop="10dp" />
+
+        <ImageButton
+            android:layout_width="126dp"
+            android:layout_height="126dp"
+            android:id="@+id/printTicketBtn"
+            android:src="@drawable/print_ticket"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:layout_marginTop="10dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>
