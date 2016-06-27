@@ -1,19 +1,33 @@
 package tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
+
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.StartTrip.StartTripActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.JourneyStatus;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
 
 public class TripOptionsActivity extends AppCompatActivity {
 
     private String onCourseJourney;
+    private String journeysREST;
+    private String date_today;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +46,30 @@ public class TripOptionsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (onCourseJourney == null || onCourseJourney.isEmpty()) {
-                    //TODO: call activity para abrir journey. Listarle los journeys de hoy para elegir?
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                    date_today = dateFormat.format(new Date());
+                    long today = System.currentTimeMillis();
+
+                    System.out.println(date_today);
+                    journeysREST = getString(R.string.URLjourneys,
+                            getString(R.string.URL_REST_API),
+                            getString(R.string.tenantId),
+                            "DATE_STATUS",
+                            date_today,
+                            JourneyStatus.ACTIVE);
+
+                    AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), journeysREST, "GET", null).execute();
+                    try {
+                        JSONObject journeyData = journeyResult.get();
+
+
+                        Intent startTripIntent = new Intent(getApplicationContext(), StartTripActivity.class);
+                        startTripIntent.putExtra("journeys", journeyData.get("data").toString());
+                        startActivity(startTripIntent);
+
+                    } catch (InterruptedException | ExecutionException | JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else if (onCourseJourney != null && !onCourseJourney.isEmpty()) {
                     Toast.makeText(getApplicationContext(), R.string.journey_already_open, Toast.LENGTH_LONG).show();
                 }

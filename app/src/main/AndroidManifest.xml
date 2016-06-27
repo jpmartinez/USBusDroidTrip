@@ -29,7 +29,9 @@
         <activity android:name=".Activities.Tickets.TicketOptionsActivity" />
         <activity android:name=".Activities.Trip.TripOptionsActivity" />
         <activity android:name=".Activities.Tickets.ScanTicket.ScanTicketActivity" />
-        <activity android:name=".Activities.Tickets.ScanTicket.STShowDetailsActivity"></activity>
+        <activity android:name=".Activities.Tickets.ScanTicket.STShowDetailsActivity" />
+        <activity android:name=".Activities.Trip.StartTrip.StartTripActivity" />
+        <activity android:name=".Activities.Trip.StartTrip.STResultActivity"></activity>
     </application>
 
 </manifest>

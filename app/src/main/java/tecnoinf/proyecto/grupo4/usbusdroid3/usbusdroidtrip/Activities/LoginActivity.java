@@ -45,13 +45,13 @@ public class LoginActivity extends AppCompatActivity {
 
         loginURL = getString(R.string.URLlogin, getString(R.string.URL_REST_API));
         sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
-        saved_password = sharedPreferences.getString("password", "first_use");
-        if(!saved_password.equalsIgnoreCase("first_use")) {
-            saved_username = sharedPreferences.getString("username", "");
-
-            mAuthTask = new UserLoginTask(saved_username, saved_password, getApplicationContext(), "twitter");
-            mAuthTask.execute((Void) null);
-        }
+//        saved_password = sharedPreferences.getString("password", "first_use");
+//        if(!saved_password.equalsIgnoreCase("first_use")) {
+//            saved_username = sharedPreferences.getString("username", "");
+//
+//            mAuthTask = new UserLoginTask(saved_username, saved_password, getApplicationContext(), "twitter");
+//            mAuthTask.execute((Void) null);
+//        }
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(password) || password.length() < 6) {
+        if (TextUtils.isEmpty(password) || password.length() < 4) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
