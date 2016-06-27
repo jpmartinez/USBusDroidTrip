@@ -1,11 +1,8 @@
 package tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.StartTrip;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,11 +18,9 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.concurrent.ExecutionException;
 
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.DayConverter_ES;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
@@ -85,7 +80,7 @@ public class StartTripActivity extends ListActivity {
                     try {
                         String journeyId = ((TextView) view.findViewById(R.id.id)).getText().toString();
 
-                        startJourneyREST = getString(R.string.URLstartJourney,
+                        startJourneyREST = getString(R.string.URLupdateJourney,
                                 getString(R.string.URL_REST_API),
                                 getString(R.string.tenantId),
                                 journeyId);

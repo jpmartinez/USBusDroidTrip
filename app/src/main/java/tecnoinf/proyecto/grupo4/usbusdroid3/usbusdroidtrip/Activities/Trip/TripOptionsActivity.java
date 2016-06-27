@@ -3,7 +3,6 @@ package tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +26,7 @@ public class TripOptionsActivity extends AppCompatActivity {
 
     private String onCourseJourney;
     private String journeysREST;
+    private String endJourneyREST;
     private String date_today;
 
     @Override
@@ -34,7 +34,7 @@ public class TripOptionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_options);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
+        final SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
         onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
 
         ImageButton startTripBt = (ImageButton) findViewById(R.id.startTripBtn);
@@ -83,6 +83,19 @@ public class TripOptionsActivity extends AppCompatActivity {
                 if (onCourseJourney == null || onCourseJourney.isEmpty()) {
                     Toast.makeText(getApplicationContext(), R.string.no_open_trip, Toast.LENGTH_LONG).show();
                 } else {
+                    endJourneyREST = getString(R.string.URLupdateJourney,
+                            getString(R.string.URL_REST_API),
+                            getString(R.string.tenantId),
+                            onCourseJourney);
+
+
+                    journey.put("status", JourneyStatus.ARRIVED);
+
+                    AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), endJourneyREST, "PUT", journey).execute();
+                    //Intent resultIntent = new Intent(getBaseContext(), STResultActivity.class);
+                    //resultIntent.putExtra("journey", journeysJsonArray.get(position).toString());
+                    //startActivity(resultIntent);
+
                     //TODO: Otra activity para mostrar data del trip para confirmar cierre.
                 }
             }
