@@ -23,6 +23,7 @@
     <string name="URLjourneysFromTo"><![CDATA[%1$s/%2$s/journey/get/jbyDateOriginAndDestination?date=%3$s&origin=%4$s&destination=%5$s]]></string>
     <string name="URLjourneys"><![CDATA[%1$s/%2$s/journey?query=%3$s&date=%4$s&status=%5$s&offset=0&limit=999]]></string>
     <string name="URLupdateJourney"><![CDATA[%1$s/%2$s/journey/%3$s]]></string>
+    <string name="URLupdateBus"><![CDATA[%1$s/%2$s/bus/%3$s]]></string>
     <string name="URLServicesFromTo"><![CDATA[%1$s/%2$s/service/get/dowfromto?dow=%3$s&origin=%4$s&destination=%5$s&offset=0&limit=999]]></string>
     <string name="URLallBusStops"><![CDATA[%1$s/%2$s/busstop?&offset=0&limit=999]]></string>
     <string name="URLallBusStopsFrom"><![CDATA[%1$s/%2$s/busstop?origin=%3$s&offset=0&limit=999]]></string>
@@ -37,4 +38,10 @@
     <string name="used_canceled_ticket">El ticket ya fue utilizado</string>
     <string name="no_open_trip">No hay ningún viaje abierto</string>
     <string name="journey_already_open">Ya hay un viaje abierto</string>
+    <string name="odometer_not_set">Primero debe cargar datos del odómetro</string>
+    <string name="odometer_already_set">Ya ha cargado datos del odómetro</string>
+    <string name="MustInputOdometerReading">Primero debe ingresar la lectura</string>
+    <string name="odometerReadingSaved">Datos guardados correctamente</string>
+    <string name="odometer_set_reading_Button">Confirmar Lectura</string>
+    <string name="end_trip_confirmation_message"><![CDATA[¿Confirma que desea finalizar el viaje?]]></string>
 </resources>

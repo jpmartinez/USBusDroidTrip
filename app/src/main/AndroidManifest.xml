@@ -31,7 +31,9 @@
         <activity android:name=".Activities.Tickets.ScanTicket.ScanTicketActivity" />
         <activity android:name=".Activities.Tickets.ScanTicket.STShowDetailsActivity" />
         <activity android:name=".Activities.Trip.StartTrip.StartTripActivity" />
-        <activity android:name=".Activities.Trip.StartTrip.STResultActivity"></activity>
+        <activity android:name=".Activities.Trip.StartTrip.STResultActivity" />
+        <activity android:name=".Activities.Trip.CloseTrip.CTConfirmationActivity" />
+        <activity android:name=".Activities.Trip.Odometer.SetOdometerActivity"></activity>
     </application>
 
 </manifest>

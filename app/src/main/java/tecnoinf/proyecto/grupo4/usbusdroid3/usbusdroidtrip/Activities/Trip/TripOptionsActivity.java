@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.MainActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.CloseTrip.CTConfirmationActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.Odometer.SetOdometerActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.StartTrip.StartTripActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.JourneyStatus;
@@ -25,9 +28,10 @@ import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
 public class TripOptionsActivity extends AppCompatActivity {
 
     private String onCourseJourney;
+    private Boolean odometerSet;
     private String journeysREST;
-    private String endJourneyREST;
     private String date_today;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,9 @@ public class TripOptionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_options);
 
         final SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
+        odometerSet = sharedPreferences.getBoolean("odometerSet", false);
 
         ImageButton startTripBt = (ImageButton) findViewById(R.id.startTripBtn);
         ImageButton endTripBt = (ImageButton) findViewById(R.id.endTripBtn);
@@ -48,7 +54,6 @@ public class TripOptionsActivity extends AppCompatActivity {
                 if (onCourseJourney == null || onCourseJourney.isEmpty()) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                     date_today = dateFormat.format(new Date());
-                    long today = System.currentTimeMillis();
 
                     System.out.println(date_today);
                     journeysREST = getString(R.string.URLjourneys,
@@ -82,21 +87,11 @@ public class TripOptionsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (onCourseJourney == null || onCourseJourney.isEmpty()) {
                     Toast.makeText(getApplicationContext(), R.string.no_open_trip, Toast.LENGTH_LONG).show();
+                } else if (odometerSet) {
+                    Intent confirmationIntent = new Intent(getApplicationContext(), CTConfirmationActivity.class);
+                    startActivity(confirmationIntent);
                 } else {
-                    endJourneyREST = getString(R.string.URLupdateJourney,
-                            getString(R.string.URL_REST_API),
-                            getString(R.string.tenantId),
-                            onCourseJourney);
-
-
-                    journey.put("status", JourneyStatus.ARRIVED);
-
-                    AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), endJourneyREST, "PUT", journey).execute();
-                    //Intent resultIntent = new Intent(getBaseContext(), STResultActivity.class);
-                    //resultIntent.putExtra("journey", journeysJsonArray.get(position).toString());
-                    //startActivity(resultIntent);
-
-                    //TODO: Otra activity para mostrar data del trip para confirmar cierre.
+                    Toast.makeText(getApplicationContext(), R.string.odometer_not_set, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -108,7 +103,8 @@ public class TripOptionsActivity extends AppCompatActivity {
                 if (onCourseJourney == null || onCourseJourney.isEmpty()) {
                     Toast.makeText(getApplicationContext(), R.string.no_open_trip, Toast.LENGTH_LONG).show();
                 } else {
-                    //TODO: Otra activity para mostrar input para cargar odometer. Existe esto?
+                    Intent setOdometerIntent = new Intent(getApplicationContext(), SetOdometerActivity.class);
+                    startActivity(setOdometerIntent);
                 }
             }
         });

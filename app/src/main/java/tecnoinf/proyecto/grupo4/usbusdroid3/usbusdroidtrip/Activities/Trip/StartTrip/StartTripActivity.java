@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.DayConverter_ES;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
@@ -85,15 +86,17 @@ public class StartTripActivity extends ListActivity {
                                 getString(R.string.tenantId),
                                 journeyId);
 
-                        JSONObject journey = journeysJsonArray.getJSONObject(position);
+                        JSONObject journey = new JSONObject();
                         journey.put("status", JourneyStatus.LEFT);
 
-                        AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), startJourneyREST, "PUT", journey).execute();
+                        AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), startJourneyREST, "PATCH", journey).execute();
+                        JSONObject journeyData = journeyResult.get();
+
                         Intent resultIntent = new Intent(getBaseContext(), STResultActivity.class);
-                        resultIntent.putExtra("journey", journeysJsonArray.get(position).toString());
+                        resultIntent.putExtra("journey", journeyData.getString("data"));
                         startActivity(resultIntent);
 
-                    } catch (JSONException e) {
+                    } catch (JSONException | InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }

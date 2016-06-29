@@ -49,6 +49,8 @@ public class STResultActivity extends AppCompatActivity {
                 message.setText("Viaje iniciado correctamente");
                 mainActivity.putExtra("journey", journey.toString());
                 editor.putString("onCourseJourney", journey.get("id").toString());
+                editor.putBoolean("odometerSet", false);
+                editor.putString("busId", journey.getJSONObject("bus").getString("id"));
                 editor.apply();
                 success = true;
             } else {
