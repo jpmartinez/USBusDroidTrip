@@ -69,7 +69,7 @@ public class StartTripActivity extends ListActivity {
                     journeyMap,
                     R.layout.activity_start_trip_list_item,
                     new String[] { "id", "name", "day", "date", "time", "busNumber" },
-                    new int[] { R.id.id, R.id.journeyNameTV, R.id.journeyDayTV, R.id.journeyDateTV, R.id.journeyTimeTV, R.id.busNumberTV });
+                    new int[] { R.id.id, R.id.journeyNameTV, R.id.journeyDayTV, R.id.journeyDateTV, R.id.journeyTimeTV, R.id.routeStopStatusTV});
             setListAdapter(adapter);
 
             ListView lv = getListView();

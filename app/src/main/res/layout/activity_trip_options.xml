@@ -29,8 +29,19 @@
         <ImageButton
             android:layout_width="126dp"
             android:layout_height="126dp"
-            android:id="@+id/endTripBtn"
-            android:src="@drawable/end_trip"
+            android:id="@+id/routeStopBtn"
+            android:scaleType="fitCenter"
+            android:src="@drawable/route_stop"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:clickable="true" />
+
+        <ImageButton
+            android:layout_width="126dp"
+            android:layout_height="126dp"
+            android:id="@+id/odometerBtn"
+            android:src="@drawable/odometer"
             android:layout_gravity="center_horizontal"
             android:clickable="true"
             android:scaleType="fitCenter"
@@ -40,8 +51,8 @@
         <ImageButton
             android:layout_width="126dp"
             android:layout_height="126dp"
-            android:id="@+id/odometerBtn"
-            android:src="@drawable/odometer"
+            android:id="@+id/endTripBtn"
+            android:src="@drawable/end_trip"
             android:layout_gravity="center_horizontal"
             android:clickable="true"
             android:scaleType="fitCenter"

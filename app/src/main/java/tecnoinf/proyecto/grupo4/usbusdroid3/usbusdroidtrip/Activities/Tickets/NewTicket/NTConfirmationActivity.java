@@ -5,41 +5,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.pdf.PdfDocument;
+import android.graphics.Point;
 import android.os.AsyncTask;
-import android.os.CancellationSignal;
-import android.os.ParcelFileDescriptor;
-import android.print.PageRange;
-import android.print.PrintAttributes;
-import android.print.PrintDocumentAdapter;
-import android.print.PrintDocumentInfo;
-import android.print.PrintManager;
-import android.print.pdf.PrintedPdfDocument;
+import android.os.Bundle;
 import android.support.v4.print.PrintHelper;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutionException;
 
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.TicketOptionsActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.QRCodeEncoder;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
-import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.Ticket;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.TicketStatus;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
 
@@ -53,7 +46,11 @@ public class NTConfirmationActivity extends AppCompatActivity {
     private JSONObject newTicket;
     private String buyTicketRest;
     private Intent father;
-    JSONObject ticketData;
+    private JSONObject ticketData;
+    private String ticketIdEncrypted;
+    private ImageButton qrCodeBtn;
+    private Integer WIDTH;
+    private Integer HEIGHT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +79,7 @@ public class NTConfirmationActivity extends AppCompatActivity {
             TextView ticketBusIdTV = (TextView) findViewById(R.id.ticketBusIdTV);
             TextView ticketSeatTV = (TextView) findViewById(R.id.ticketSeatTV);
             TextView ticketCostTV = (TextView) findViewById(R.id.ticketCostTV);
+            qrCodeBtn = (ImageButton) findViewById(R.id.qrCodeBtn);
             assert ticketCostTV != null;
             ticketCostTV.setText(paymentAmount);
             assert ticketSeatTV != null;
@@ -94,6 +92,7 @@ public class NTConfirmationActivity extends AppCompatActivity {
             ticketDateTV.setText(dateFormat.format(journey.get("date")));
             assert ticketBusIdTV != null;
             ticketBusIdTV.setText(journey.get("busNumber").toString());
+            assert  qrCodeBtn != null;
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -122,13 +121,21 @@ public class NTConfirmationActivity extends AppCompatActivity {
                     newTicket.put("closed", true);
                     newTicket.put("status", TicketStatus.CONFIRMED);
                     newTicket.put("routeId", journey.getJSONObject("service").getJSONObject("route").get("id"));
+                    newTicket.put("paymentToken", "droid_cash");
 
                     AsyncTask<Void, Void, JSONObject> ticketResult = new RestCallAsync(getApplicationContext(), buyTicketRest, "POST", newTicket).execute();
                     ticketData = ticketResult.get();
 
+                    JSONObject ticket = new JSONObject(ticketData.getString("data"));
+                    JSONObject qrTicket = new JSONObject();
+                    qrTicket.put("tenantId", ticket.get("tenantId"));
+                    qrTicket.put("id", ticket.get("id"));
+
+                    ticketIdEncrypted = qrTicket.toString();
+                    Bitmap bitmap = encodeAsBitmap(ticketIdEncrypted);
+                    qrCodeBtn.setImageBitmap(bitmap);
+
                     View myView = getWindow().getDecorView().getRootView().findViewById(R.id.tableLayout);
-
-
                     //**********************PRINT*************************************************
                     Bitmap screen;
                     //View v1 = myView.getRootView();
@@ -140,13 +147,15 @@ public class NTConfirmationActivity extends AppCompatActivity {
 
                     PrintHelper photoPrinter = new PrintHelper(getBaseContext());
                     photoPrinter.setScaleMode(PrintHelper.SCALE_MODE_FIT);
-                    photoPrinter.printBitmap("droids.jpg - test print", screen);
+                    photoPrinter.printBitmap("usbus_ticket.jpg", screen);
                     //**********************PRINT*************************************************
 
-                    Intent ticketOptionsIntent = new Intent(getApplicationContext(), TicketOptionsActivity.class);
-                    startService(ticketOptionsIntent);
+//                    Intent ticketOptionsIntent = new Intent(getApplicationContext(), TicketOptionsActivity.class);
+//                    startActivity(ticketOptionsIntent);
+                    confirmBtn.setVisibility(View.GONE);
+                    cancelBtn.setVisibility(View.GONE);
 
-                } catch (JSONException | InterruptedException | ExecutionException e) {
+                } catch (JSONException | InterruptedException | ExecutionException | WriterException e) {
                     e.printStackTrace();
                 }
             }
@@ -159,7 +168,7 @@ public class NTConfirmationActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Ticket Cancelado", Toast.LENGTH_LONG).show();
 
                 Intent ticketOptionsIntent = new Intent(getApplicationContext(), TicketOptionsActivity.class);
-                startService(ticketOptionsIntent);
+                startActivity(ticketOptionsIntent);
             }
         });
     }
@@ -170,4 +179,58 @@ public class NTConfirmationActivity extends AppCompatActivity {
             startActivity(new Intent(this, TicketOptionsActivity.class));
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, TicketOptionsActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+
+    Bitmap encodeAsBitmap(String str) throws WriterException {
+        BitMatrix result;
+
+        //Find screen size
+        WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        WIDTH = point.x;
+        HEIGHT = point.y - 400;
+        int smallerDimension = WIDTH < HEIGHT ? WIDTH : HEIGHT;
+        smallerDimension = smallerDimension * 3/4;
+
+        //Encode with a QR Code image
+        QRCodeEncoder qrCodeEncoder = new QRCodeEncoder(ticketIdEncrypted,
+                null,
+                BarcodeFormat.QR_CODE.toString(),
+                smallerDimension);
+        try {
+            Bitmap bitmap = qrCodeEncoder.encodeAsBitmap();
+//            ImageView myImage = (ImageView) findViewById(R.id.imageView1);
+            qrCodeBtn.setImageBitmap(bitmap);
+
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            result = new MultiFormatWriter().encode(str,
+                    BarcodeFormat.QR_CODE, WIDTH, HEIGHT, null);
+        } catch (IllegalArgumentException iae) {
+            // Unsupported format
+            return null;
+        }
+        int w = result.getWidth();
+        int h = result.getHeight();
+        int[] pixels = new int[w * h];
+        for (int y = 0; y < h; y++) {
+            int offset = y * w;
+            for (int x = 0; x < w; x++) {
+                pixels[offset + x] = result.get(x, y) ? Color.BLACK : Color.WHITE;
+            }
+        }
+        Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, WIDTH, 0, 0, w, h);
+        return bitmap;
+    }
+
 }

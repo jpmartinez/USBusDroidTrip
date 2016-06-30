@@ -36,7 +36,8 @@
         <activity android:name=".Activities.Trip.Odometer.SetOdometerActivity" />
         <activity android:name=".Activities.Tickets.NewTicket.NewTicketActivity" />
         <activity android:name=".Activities.Tickets.NewTicket.NTBusStopSelectionActivity" />
-        <activity android:name=".Activities.Tickets.NewTicket.NTConfirmationActivity"></activity>
+        <activity android:name=".Activities.Tickets.NewTicket.NTConfirmationActivity" />
+        <activity android:name=".Activities.Trip.RouteStop.RouteStopListActivity"></activity>
     </application>
 
 </manifest>

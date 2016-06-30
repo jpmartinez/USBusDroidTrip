@@ -13,6 +13,15 @@ public class RouteStop {
     private String busStop;
     private Double km;
     private boolean isCombinationPoint;
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getBusStop() {
         return busStop;
@@ -43,6 +52,9 @@ public class RouteStop {
             busStop = object.getString("busStop");
             km = object.getDouble("km");
             isCombinationPoint = object.getBoolean("combinationPoint");
+            if(object.get("status") != null) {
+                status = object.getString("status");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

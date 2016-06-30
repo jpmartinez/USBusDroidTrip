@@ -71,13 +71,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
-            android:labelFor="@+id/busNumberTV"
+            android:labelFor="@+id/routeStopStatusTV"
             android:text="Coche"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#0c1248" />
 
         <TextView
-            android:id="@+id/busNumberTV"
+            android:id="@+id/routeStopStatusTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#0c1248" />

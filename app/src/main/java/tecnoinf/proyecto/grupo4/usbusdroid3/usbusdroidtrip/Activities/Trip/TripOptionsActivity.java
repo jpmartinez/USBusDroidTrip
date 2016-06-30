@@ -17,9 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
-import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.MainActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.CloseTrip.CTConfirmationActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.Odometer.SetOdometerActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.RouteStop.RouteStopListActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.StartTrip.StartTripActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.JourneyStatus;
@@ -46,6 +46,7 @@ public class TripOptionsActivity extends AppCompatActivity {
         ImageButton startTripBt = (ImageButton) findViewById(R.id.startTripBtn);
         ImageButton endTripBt = (ImageButton) findViewById(R.id.endTripBtn);
         ImageButton odometerBt = (ImageButton) findViewById(R.id.odometerBtn);
+        ImageButton routeStopBt = (ImageButton) findViewById(R.id.routeStopBtn);
 
         assert startTripBt != null;
         startTripBt.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +106,19 @@ public class TripOptionsActivity extends AppCompatActivity {
                 } else {
                     Intent setOdometerIntent = new Intent(getApplicationContext(), SetOdometerActivity.class);
                     startActivity(setOdometerIntent);
+                }
+            }
+        });
+
+        assert routeStopBt != null;
+        routeStopBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onCourseJourney == null || onCourseJourney.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), R.string.no_open_trip, Toast.LENGTH_LONG).show();
+                } else {
+                    Intent routeStopIntent = new Intent(getApplicationContext(), RouteStopListActivity.class);
+                    startActivity(routeStopIntent);
                 }
             }
         });
