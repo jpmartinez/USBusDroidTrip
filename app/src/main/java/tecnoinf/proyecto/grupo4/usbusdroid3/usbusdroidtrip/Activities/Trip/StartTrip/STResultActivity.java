@@ -47,7 +47,8 @@ public class STResultActivity extends AppCompatActivity {
             JSONObject journey = new JSONObject(father.getStringExtra("journey"));
             if(journey.getString("status").equalsIgnoreCase(JourneyStatus.LEFT.toString())) {
                 message.setText("Viaje iniciado correctamente");
-                mainActivity.putExtra("journey", journey.toString());
+                editor.putString("journey", journey.toString());
+                editor.putString("journeyId", journey.get("id").toString());
                 editor.putString("onCourseJourney", journey.get("id").toString());
                 editor.putBoolean("odometerSet", false);
                 editor.putString("busId", journey.getJSONObject("bus").getString("id"));

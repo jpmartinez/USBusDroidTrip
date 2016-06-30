@@ -53,13 +53,15 @@ public class CTConfirmationActivity extends AppCompatActivity {
 
                     Toast.makeText(getApplicationContext(), "Viaje finalizado correctamente", Toast.LENGTH_LONG).show();
 
-                    Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
-                    startActivity(resultIntent);
-
                     editor.putString("onCourseJourney", "");
+                    editor.putString("journey", "");
+                    editor.putString("busId", "");
+                    editor.putString("journeyId", "");
                     editor.apply();
 
-                    //TODO: mostrar toast confirmando journeyEnd
+                    Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
+                    resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(resultIntent);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

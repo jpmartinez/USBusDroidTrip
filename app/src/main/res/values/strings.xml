@@ -22,6 +22,7 @@
     <string name="URLregister">%1$s/register/client</string>
     <string name="URLjourneysFromTo"><![CDATA[%1$s/%2$s/journey/get/jbyDateOriginAndDestination?date=%3$s&origin=%4$s&destination=%5$s]]></string>
     <string name="URLjourneys"><![CDATA[%1$s/%2$s/journey?query=%3$s&date=%4$s&status=%5$s&offset=0&limit=999]]></string>
+    <string name="URLgetJourney"><![CDATA[%1$s/%2$s/journey/%3$s]]></string>
     <string name="URLupdateJourney"><![CDATA[%1$s/%2$s/journey/%3$s]]></string>
     <string name="URLupdateBus"><![CDATA[%1$s/%2$s/bus/%3$s]]></string>
     <string name="URLServicesFromTo"><![CDATA[%1$s/%2$s/service/get/dowfromto?dow=%3$s&origin=%4$s&destination=%5$s&offset=0&limit=999]]></string>

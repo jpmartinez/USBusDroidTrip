@@ -33,7 +33,10 @@
         <activity android:name=".Activities.Trip.StartTrip.StartTripActivity" />
         <activity android:name=".Activities.Trip.StartTrip.STResultActivity" />
         <activity android:name=".Activities.Trip.CloseTrip.CTConfirmationActivity" />
-        <activity android:name=".Activities.Trip.Odometer.SetOdometerActivity"></activity>
+        <activity android:name=".Activities.Trip.Odometer.SetOdometerActivity" />
+        <activity android:name=".Activities.Tickets.NewTicket.NewTicketActivity" />
+        <activity android:name=".Activities.Tickets.NewTicket.NTBusStopSelectionActivity" />
+        <activity android:name=".Activities.Tickets.NewTicket.NTConfirmationActivity"></activity>
     </application>
 
 </manifest>

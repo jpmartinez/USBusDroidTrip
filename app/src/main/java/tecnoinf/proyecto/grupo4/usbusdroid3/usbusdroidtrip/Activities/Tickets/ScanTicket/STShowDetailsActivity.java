@@ -95,6 +95,8 @@ public class STShowDetailsActivity extends AppCompatActivity {
             }
         });
 
+        //TODO: add back button, in usecase of just checking ticket already confirmed
+
 
     }
 }
