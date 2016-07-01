@@ -45,11 +45,11 @@ public class CTConfirmationActivity extends AppCompatActivity {
                             getString(R.string.URL_REST_API),
                             getString(R.string.tenantId),
                             onCourseJourney);
-                    JSONObject journey = new JSONObject();
-                    journey.put("status", JourneyStatus.ARRIVED);
+                    JSONObject journeyPatch = new JSONObject();
+                    journeyPatch.put("status", JourneyStatus.ARRIVED);
 
 
-                    AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), endJourneyREST, "PATCH", journey).execute();
+                    AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), endJourneyREST, "PATCH", journeyPatch).execute();
 
                     Toast.makeText(getApplicationContext(), "Viaje finalizado correctamente", Toast.LENGTH_LONG).show();
 

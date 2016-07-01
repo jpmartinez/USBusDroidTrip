@@ -3,33 +3,41 @@ package tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.Rout
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.view.menu.ActionMenuItemView;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.RouteStop;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
 
 public class RouteStopListActivity extends ListActivity {
 
     private JSONArray routeStops;
+    private JSONArray ticketsArray;
+    private JSONObject journey;
     private ArrayList<HashMap<String, String>> routeStopsMap;
     private ListAdapter adapter;
+    private SharedPreferences.Editor editor;
+    private String updateJourneyREST;
+    private String onCourseJourney;
+    private String selectedBusStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +45,13 @@ public class RouteStopListActivity extends ListActivity {
         setContentView(R.layout.activity_routestop_list);
 
         SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
         try {
+            journey = new JSONObject(sharedPreferences.getString("journey", ""));
+            ticketsArray = new JSONArray(sharedPreferences.getString("ticketsArray", ""));
+
             routeStops = new JSONArray(sharedPreferences.getString("routeStops", ""));
             final List<RouteStop> routeStopsList = RouteStop.fromJson(routeStops);
 
@@ -46,11 +60,7 @@ public class RouteStopListActivity extends ListActivity {
             for (RouteStop rs2 : routeStopsList) {
                 HashMap<String, String> j = new HashMap<>();
                 j.put("name", rs2.getBusStop());
-                if(rs2.getStatus() == null || rs2.getStatus().isEmpty()) {
-                    j.put("status", "PENDIENTE");
-                } else {
-                    j.put("status", rs2.getStatus());
-                }
+                j.put("status", rs2.getStatus());
                 routeStopsMap.add(j);
             }
 
@@ -63,41 +73,81 @@ public class RouteStopListActivity extends ListActivity {
             setListAdapter(adapter);
 
             ListView lv = getListView();
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    //TODO: confirmar en popup?
-                    //TODO: cambiar color del imageView bus_stop_sign a GRIS
-                    HashMap<String, String> t = routeStopsMap.get(position);
-                    t.put("status", "ARRIBADO");
-                    routeStopsMap.set(position, t);
-                    adapter.notifyDataSetChanged();
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    String previousStatus = "";
+                    View previousStop = parent.getChildAt(position-1);
+                    if (previousStop != null) {
+                        TextView previousStopTV = (TextView) previousStop.findViewById(R.id.routeStopStatusTV);
+                        previousStatus = previousStopTV.getText().toString();
+                    }
+                    if (previousStatus.equalsIgnoreCase("PENDIENTE")) {
+                        Toast.makeText(getBaseContext(), "Debe seleccionar las paradas en orden", Toast.LENGTH_LONG).show();
+                    } else {
+                        TextView busStopNameTV = (TextView) view.findViewById(R.id.routeStopNameTV);
+                        selectedBusStop = busStopNameTV.getText().toString();
+
+                        TextView statusTV = (TextView) view.findViewById(R.id.routeStopStatusTV);
+                        statusTV.setText("ARRIBADO");
+                        ImageView checkIV = (ImageView) view.findViewById(R.id.routeStopCheckIV);
+                        checkIV.setVisibility(View.VISIBLE);
+                        try {
+                            routeStops.getJSONObject(position).put("status", "ARRIBADO");
+                            editor.putString("routeStops", routeStops.toString());
+                            editor.apply();
+
+
+                            updateJourneyREST = getString(R.string.URLupdateJourney,
+                                    getString(R.string.URL_REST_API),
+                                    getString(R.string.tenantId),
+                                    onCourseJourney);
+
+                            System.out.println("*************seatsState: "+journey.get("seatsState"));
+                            JSONArray updatedSeatState = new JSONArray(journey.get("seatsState").toString());
+
+                            //Tomo solo los tickets que NO terminan en esta parada (para ser enviados al journey REST)
+                            //JSONArray ticketsNotEndingHere = new JSONArray();
+                            for (int k = 0; k < ticketsArray.length(); k++) {
+                                if (ticketsArray.getJSONObject(k).getJSONObject("getsOff").getString("name")
+                                        .equalsIgnoreCase(selectedBusStop)) {
+
+                                    for (int j = 0; j < updatedSeatState.length(); j++) {
+                                        if (updatedSeatState.getJSONObject(j).getInt("number")
+                                                == ticketsArray.getJSONObject(k).getInt("seat")) {
+                                            updatedSeatState.remove(j);
+                                        }
+                                    }
+
+                                    //ticketsNotEndingHere.put(ticketsArray.getJSONObject(k));
+                                }
+                            }
+
+//                            for (int j = 0; j < ticketsNotEndingHere.length(); j++) {
+//                                JSONObject seatToBeFreed = new JSONObject();
+//                                seatToBeFreed.put("number", ticketsNotEndingHere.getJSONObject(j).getInt("seat"));
+//                                seatToBeFreed.put("position", "CORRIDOR"); //TODO: sacar position de la posición real del seat
+//                                seatToBeFreed.put("free", false);
+//
+//                                updatedSeatState.put(seatToBeFreed);
+//                            }
+
+
+
+                            JSONObject patchData = new JSONObject();
+                            patchData.put("seatsState", updatedSeatState);
+                            AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), updateJourneyREST, "PATCH", patchData).execute();
+                            JSONObject journeyData = journeyResult.get();
+
+                            System.out.println(journeyData);
+
+                        } catch (JSONException | ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return false;
                 }
             });
-
-//            List<RouteStop> routeStopList = RouteStop.fromJson(routeStops);
-//            ArrayList<String> routeStopsNames = new ArrayList<>();
-//            for (RouteStop rs: routeStopList) {
-//                routeStopsNames.add(rs.getBusStop());
-//            }
-//
-//            final Spinner spinnerStops = (Spinner) findViewById(R.id.routeStopSetSpn);
-//            ArrayAdapter<String> stopsAdapter = new ArrayAdapter<>(this, R.layout.simple_usbus_spinner_item, routeStopsNames);
-//            assert spinnerStops != null;
-//            spinnerStops.setAdapter(stopsAdapter);
-//
-//            spinnerStops.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                @Override
-//                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                    Toast.makeText(getBaseContext(), spinnerStops.getSelectedItem().toString(), Toast.LENGTH_LONG).show();
-//                }
-//
-//                @Override
-//                public void onNothingSelected(AdapterView<?> parent) {
-//
-//                }
-//            });
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

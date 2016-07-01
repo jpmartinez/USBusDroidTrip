@@ -52,6 +52,19 @@ public class STResultActivity extends AppCompatActivity {
                 editor.putString("onCourseJourney", journey.get("id").toString());
                 editor.putBoolean("odometerSet", false);
                 editor.putString("busId", journey.getJSONObject("bus").getString("id"));
+
+                for (int i = 0; i<journey
+                        .getJSONObject("service")
+                        .getJSONObject("route")
+                        .getJSONArray("busStops")
+                        .length(); i++ ) {
+
+                    journey.getJSONObject("service")
+                            .getJSONObject("route")
+                            .getJSONArray("busStops")
+                            .getJSONObject(i)
+                            .put("status", "PENDIENTE");
+                }
                 editor.putString("routeStops", journey
                                                 .getJSONObject("service")
                                                 .getJSONObject("route")

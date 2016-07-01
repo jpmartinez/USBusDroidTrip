@@ -86,10 +86,10 @@ public class StartTripActivity extends ListActivity {
                                 getString(R.string.tenantId),
                                 journeyId);
 
-                        JSONObject journey = new JSONObject();
-                        journey.put("status", JourneyStatus.LEFT);
+                        JSONObject journeyPatch = new JSONObject();
+                        journeyPatch.put("status", JourneyStatus.LEFT);
 
-                        AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), startJourneyREST, "PATCH", journey).execute();
+                        AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), startJourneyREST, "PATCH", journeyPatch).execute();
                         JSONObject journeyData = journeyResult.get();
 
                         Intent resultIntent = new Intent(getBaseContext(), STResultActivity.class);

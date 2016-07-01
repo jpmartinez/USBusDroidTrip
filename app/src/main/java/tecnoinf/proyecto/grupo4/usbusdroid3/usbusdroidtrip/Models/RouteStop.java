@@ -52,7 +52,7 @@ public class RouteStop {
             busStop = object.getString("busStop");
             km = object.getDouble("km");
             isCombinationPoint = object.getBoolean("combinationPoint");
-            if(object.get("status") != null) {
+            if(object.has("status")) {
                 status = object.getString("status");
             }
         } catch (JSONException e) {

@@ -62,7 +62,7 @@ public class NewTicketActivity extends AppCompatActivity {
         @Override
         public boolean isEnabled(int position) {
             //Integer occupiedPosition = occupied.indexOf(position);
-            return ((((position + 3) % 5) != 0) && !occupied.contains(position)); //TODO: ...&& position no está en rango de libres
+            return (occupied == null || (((position + 3) % 5) != 0) && !occupied.contains(position));
         }
 
         @Override
@@ -142,8 +142,13 @@ public class NewTicketActivity extends AppCompatActivity {
             //token = father.getStringExtra("token");
             //ticketPriceRest = getString(R.string.URLticketPrice, );
 
+            JSONArray occupiedJSONArray;
             journeyJSON = new JSONObject(father.getStringExtra("journey"));
-            JSONArray occupiedJSONArray = journeyJSON.getJSONArray("seatsState");
+            if (journeyJSON.get("seatsState") != null && journeyJSON.getJSONArray("seatsState").length() > 0) {
+                occupiedJSONArray = journeyJSON.getJSONArray("seatsState");
+            } else {
+                occupiedJSONArray = new JSONArray();
+            }
 
             //occupied = father.getIntegerArrayListExtra("ocuppiedSeats");
             occupied = new ArrayList<>();
@@ -181,7 +186,7 @@ public class NewTicketActivity extends AppCompatActivity {
                     System.out.println("Selected Seat: " + selectedSeat);
 
                     ImageView selectedSeatImage = (ImageView) view.findViewById(R.id.seatImage);
-                    if (occupied != null && !occupied.isEmpty() && !occupied.contains(position)) {
+                    if (occupied == null || (occupied != null && !occupied.isEmpty() && !occupied.contains(position))) {
                         selectedSeatImage.setColorFilter(Color.GREEN);
                     }
 
@@ -230,7 +235,7 @@ public class NewTicketActivity extends AppCompatActivity {
         if(occupied != null && !occupied.isEmpty()) {
             return (((position+3) % 5) != 0) && (occupied.indexOf(positionI) == -1);
         } else {
-            Integer occupiedPosition = occupied.indexOf(positionI);
+            Integer occupiedPosition = occupied == null? -1 : occupied.indexOf(positionI);
             System.out.println("ocupado: " + occupiedPosition);
             Boolean result;
             result = ((((positionI + 3) % 5) != 0) && occupiedPosition.intValue() == -1); //TODO: ...&& position no está en rango de libres

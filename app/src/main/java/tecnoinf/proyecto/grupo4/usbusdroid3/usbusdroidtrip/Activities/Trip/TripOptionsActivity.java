@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +31,8 @@ public class TripOptionsActivity extends AppCompatActivity {
     private String onCourseJourney;
     private Boolean odometerSet;
     private String journeysREST;
+    private String getJourneyREST;
+    private String ticketsREST;
     private String date_today;
     private SharedPreferences.Editor editor;
 
@@ -55,8 +58,6 @@ public class TripOptionsActivity extends AppCompatActivity {
                 if (onCourseJourney == null || onCourseJourney.isEmpty()) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                     date_today = dateFormat.format(new Date());
-
-                    System.out.println(date_today);
                     journeysREST = getString(R.string.URLjourneys,
                             getString(R.string.URL_REST_API),
                             getString(R.string.tenantId),
@@ -117,8 +118,33 @@ public class TripOptionsActivity extends AppCompatActivity {
                 if (onCourseJourney == null || onCourseJourney.isEmpty()) {
                     Toast.makeText(getApplicationContext(), R.string.no_open_trip, Toast.LENGTH_LONG).show();
                 } else {
-                    Intent routeStopIntent = new Intent(getApplicationContext(), RouteStopListActivity.class);
-                    startActivity(routeStopIntent);
+                    try {
+                        ticketsREST = getString(R.string.URLgetTickets,
+                                getString(R.string.URL_REST_API),
+                                getString(R.string.tenantId),
+                                onCourseJourney );
+
+                        getJourneyREST = getString(R.string.URLgetJourney,
+                                getString(R.string.URL_REST_API),
+                                getString(R.string.tenantId),
+                                onCourseJourney);
+
+                        AsyncTask<Void, Void, JSONObject> ticketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
+                        JSONObject ticketsData = ticketsResult.get();
+                        editor.putString("ticketsArray", ticketsData.get("data").toString());
+
+                        AsyncTask<Void, Void, JSONObject> thisJourneyResult = new RestCallAsync(getApplicationContext(), getJourneyREST, "GET", null).execute();
+                        JSONObject thisJourneyData = thisJourneyResult.get();
+                        editor.putString("journey", thisJourneyData.get("data").toString());
+
+                        editor.apply();
+
+                        Intent routeStopIntent = new Intent(getApplicationContext(), RouteStopListActivity.class);
+                        startActivity(routeStopIntent);
+
+                    } catch (InterruptedException | ExecutionException | JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
