@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -38,6 +39,7 @@ public class RouteStopListActivity extends ListActivity {
     private String updateJourneyREST;
     private String onCourseJourney;
     private String selectedBusStop;
+    private Integer standingCurrent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,8 @@ public class RouteStopListActivity extends ListActivity {
         editor = sharedPreferences.edit();
 
         onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
+        standingCurrent = sharedPreferences.getInt("standingCurrent", 0);
+
         try {
             journey = new JSONObject(sharedPreferences.getString("journey", ""));
             ticketsArray = new JSONArray(sharedPreferences.getString("ticketsArray", ""));
@@ -69,7 +73,32 @@ public class RouteStopListActivity extends ListActivity {
                     routeStopsMap,
                     R.layout.activity_routestop_list_item,
                     new String[] { "name", "status" },
-                    new int[] { R.id.routeStopNameTV, R.id.routeStopStatusTV });
+                    new int[] { R.id.routeStopNameTV, R.id.routeStopStatusTV })
+                {
+                    @Override
+                    public View getView (int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+
+                        if(((TextView)view.findViewById(R.id.routeStopStatusTV)).getText().toString().equalsIgnoreCase("ARRIBADO")) {
+                            view.findViewById(R.id.routeStopCheckIV).setVisibility(View.VISIBLE);
+                            view.setLongClickable(false);
+                            view.setEnabled(false);
+                        }
+                        return view;
+                    }
+
+                    @Override
+                    public boolean areAllItemsEnabled() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isEnabled(int position) {
+                        return !((TextView) this.getView(position, null, null).findViewById(R.id.routeStopStatusTV))
+                                .getText().toString().equalsIgnoreCase("ARRIBADO");
+                    }
+                };
+
             setListAdapter(adapter);
 
             ListView lv = getListView();
@@ -97,42 +126,37 @@ public class RouteStopListActivity extends ListActivity {
                             editor.putString("routeStops", routeStops.toString());
                             editor.apply();
 
-
                             updateJourneyREST = getString(R.string.URLupdateJourney,
                                     getString(R.string.URL_REST_API),
                                     getString(R.string.tenantId),
                                     onCourseJourney);
 
-                            System.out.println("*************seatsState: "+journey.get("seatsState"));
-                            JSONArray updatedSeatState = new JSONArray(journey.get("seatsState").toString());
+                            JSONArray updatedSeatState;
+                            if (!journey.isNull("seatsState")) {
+                                updatedSeatState = new JSONArray(journey.get("seatsState").toString());
+                            } else {
+                                updatedSeatState = new JSONArray();
+                            }
 
                             //Tomo solo los tickets que NO terminan en esta parada (para ser enviados al journey REST)
-                            //JSONArray ticketsNotEndingHere = new JSONArray();
                             for (int k = 0; k < ticketsArray.length(); k++) {
                                 if (ticketsArray.getJSONObject(k).getJSONObject("getsOff").getString("name")
                                         .equalsIgnoreCase(selectedBusStop)) {
-
-                                    for (int j = 0; j < updatedSeatState.length(); j++) {
-                                        if (updatedSeatState.getJSONObject(j).getInt("number")
-                                                == ticketsArray.getJSONObject(k).getInt("seat")) {
-                                            updatedSeatState.remove(j);
+                                    if( ticketsArray.getJSONObject(k).getInt("seat") == 999) {
+                                        standingCurrent--;
+                                    } else {
+                                        for (int j = 0; j < updatedSeatState.length(); j++) {
+                                            if (updatedSeatState.getJSONObject(j).getInt("number")
+                                                    == ticketsArray.getJSONObject(k).getInt("seat")) {
+                                                updatedSeatState.remove(j);
+                                            }
                                         }
                                     }
-
-                                    //ticketsNotEndingHere.put(ticketsArray.getJSONObject(k));
                                 }
                             }
 
-//                            for (int j = 0; j < ticketsNotEndingHere.length(); j++) {
-//                                JSONObject seatToBeFreed = new JSONObject();
-//                                seatToBeFreed.put("number", ticketsNotEndingHere.getJSONObject(j).getInt("seat"));
-//                                seatToBeFreed.put("position", "CORRIDOR"); //TODO: sacar position de la posición real del seat
-//                                seatToBeFreed.put("free", false);
-//
-//                                updatedSeatState.put(seatToBeFreed);
-//                            }
-
-
+                            editor.putInt("standingCurrent", standingCurrent);
+                            editor.apply();
 
                             JSONObject patchData = new JSONObject();
                             patchData.put("seatsState", updatedSeatState);

@@ -83,7 +83,11 @@
         android:text="Confirmar Pasaje"
         android:id="@+id/confirmTicketBtn"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:textColor="#ffffff"
+        android:background="#34a902"
+        />
 
     <TextView
         android:layout_width="wrap_content"

@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,11 +32,12 @@ public class NewTicketActivity extends AppCompatActivity {
 
     private int selectedSeat = 0;
     private int lastSelectedPosition = -1;
+    private int lastSelectedSeat = -1;
     private static ArrayList<Integer> occupied;
 
     public class MyAdapter extends BaseAdapter {
 
-        final int numberOfItems = 45 + 45/4; //TODO: cambiar por cantidad total de seats en el bus del journey (journey.bus.seats)
+        final int numberOfItems = nbrOfSeats + nbrOfSeats/4;
         private Bitmap[] bitmap = new Bitmap[numberOfItems];
 
         private Context context;
@@ -61,7 +63,6 @@ public class NewTicketActivity extends AppCompatActivity {
 
         @Override
         public boolean isEnabled(int position) {
-            //Integer occupiedPosition = occupied.indexOf(position);
             return (occupied == null || (((position + 3) % 5) != 0) && !occupied.contains(position));
         }
 
@@ -85,8 +86,7 @@ public class NewTicketActivity extends AppCompatActivity {
             Integer positionI = position;
 
             View grid;
-            if(true){//(convertView==null){
-                //grid = new View(context);
+            if(true){
                 layoutInflater = getLayoutInflater();
                 grid = layoutInflater.inflate(R.layout.gridview_seat, null);
             }else{
@@ -110,23 +110,35 @@ public class NewTicketActivity extends AppCompatActivity {
 
             if(occupied != null && !occupied.isEmpty() && occupied.indexOf(positionI) != -1) {
                 imageView.setColorFilter(Color.RED);
+                textView.setTextColor(Color.WHITE);
                 grid.setEnabled(false);
                 grid.setClickable(false);
+            } else if(seatNbr == selectedSeat && positionIsEnabled(positionI)) {
+                imageView.setColorFilter(Color.rgb(0, 100, 0));
+                textView.setTextColor(Color.WHITE);
+            } else {
+                imageView.clearColorFilter();
+                textView.setTextColor(Color.WHITE);
             }
 
-            if(seatNbr == selectedSeat && positionIsEnabled(positionI)) {
-                imageView.setColorFilter(Color.GREEN);
+            if(!positionIsEnabled(positionI) &&
+                    !(occupied != null && !occupied.isEmpty() && occupied.indexOf(positionI) != -1)) {
+                textView.setTextColor(Color.TRANSPARENT);
             }
-
             return grid;
         }
     }
 
     GridView gridView;
     Button confirmButton;
+    ImageButton standingPassengerButton;
+    TextView standingPassengerTV;
+    private Integer standingCurrent;
     private String token;
     private Intent father;
     private JSONObject journeyJSON;
+    public int standingMax;
+    public int nbrOfSeats;
 
     /** Called when the activity is first created. */
     @Override
@@ -136,21 +148,27 @@ public class NewTicketActivity extends AppCompatActivity {
             setContentView(R.layout.activity_new_ticket);
             gridView = (GridView)findViewById(R.id.seatsGV);
             confirmButton = (Button) findViewById(R.id.confirmSeatBtn);
+            standingPassengerButton = (ImageButton) findViewById(R.id.selectSeatStandingBtn);
+            standingPassengerTV = (TextView) findViewById(R.id.selectSeatStandingTV);
+
             father = getIntent();
             SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
             token = sharedPreferences.getString("token", "");
-            //token = father.getStringExtra("token");
-            //ticketPriceRest = getString(R.string.URLticketPrice, );
+            standingCurrent = sharedPreferences.getInt("standingCurrent", 0);
 
             JSONArray occupiedJSONArray;
             journeyJSON = new JSONObject(father.getStringExtra("journey"));
-            if (journeyJSON.get("seatsState") != null && journeyJSON.getJSONArray("seatsState").length() > 0) {
+
+            standingMax = journeyJSON.getJSONObject("bus").getInt("standingPassengers");
+            nbrOfSeats = journeyJSON.getJSONObject("bus").getInt("seats");
+            standingPassengerTV.setText(Integer.toString(standingMax - standingCurrent));
+
+            if (!journeyJSON.isNull("seatsState") && journeyJSON.getJSONArray("seatsState").length() > 0) {
                 occupiedJSONArray = journeyJSON.getJSONArray("seatsState");
             } else {
                 occupiedJSONArray = new JSONArray();
             }
 
-            //occupied = father.getIntegerArrayListExtra("ocuppiedSeats");
             occupied = new ArrayList<>();
             Integer occupiedSeat;
             Integer occupiedPosition;
@@ -173,40 +191,59 @@ public class NewTicketActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //lastSelectedPreviousColor = view.findViewById(R.id.seatImage).getSolidColor();
-                //selectedSeatPreviousView = (View) gridView.getItemAtPosition(position);
-
+                if(lastSelectedSeat != -1) {
+                    lastSelectedSeat = selectedSeat;
+                }
                 if(positionIsEnabled(position)) {
                     selectedSeat = position2Seat(position);
-//                    if (position < 3) {
-//                        selectedSeat = (position + 1);
-//                    } else {
-//                        selectedSeat = (position + 1) - (((position - 2) / 5) + 1);
-//                    }
-                    System.out.println("Selected Seat: " + selectedSeat);
 
                     ImageView selectedSeatImage = (ImageView) view.findViewById(R.id.seatImage);
-                    if (occupied == null || (occupied != null && !occupied.isEmpty() && !occupied.contains(position))) {
-                        selectedSeatImage.setColorFilter(Color.GREEN);
+                    if (occupied == null || occupied.isEmpty() || (occupied != null && !occupied.isEmpty() && !occupied.contains(position))) {
+                        selectedSeatImage.setColorFilter(Color.rgb(0, 100, 0));
+                        if(Integer.valueOf(standingPassengerTV.getText().toString()) > 0) {
+                            standingPassengerButton.setColorFilter(Color.BLUE);
+                        }
                     }
 
-                    //System.out.println("previous position: " + lastSelectedPosition + " color: " + lastSelectedPreviousColor);
                     if (lastSelectedPosition > -1 &&
                             lastSelectedPosition != position &&
-                            occupied != null &&
-                            !occupied.isEmpty() &&
-                            !occupied.contains(lastSelectedPosition) &&
-                            !occupied.contains(position)) {
+                            (occupied == null || occupied.isEmpty() ||
+                                    (!occupied.contains(lastSelectedPosition) &&
+                                     !occupied.contains(position)))) {
                         View lastView = parent.getChildAt(lastSelectedPosition);
-                        //View lastView = (View) gridView.getItemAtPosition(lastSelectedPosition);
-                        ImageView lastImage = (ImageView) lastView.findViewById(R.id.seatImage);
-                        lastImage.clearColorFilter();
-                        //lastImage.setColorFilter(lastSelectedPreviousColor);
+                        if (lastView != null) {
+                            ImageView lastImage = (ImageView) lastView.findViewById(R.id.seatImage);
+                            lastImage.clearColorFilter();
+                        }
                     }
 
-                    //selectedSeatPreviousImage = (ImageView) view.findViewById(R.id.seatImage);
-                    if (occupied != null && !occupied.isEmpty() && !occupied.contains(position)) {
+                    if (occupied == null || occupied.isEmpty() || !occupied.contains(position)) {
                         lastSelectedPosition = position;
+                        //lastSelectedSeat = ((TextView) view.findViewById(R.id.seatNumber));
+                    }
+                }
+            }
+        });
+
+        assert standingPassengerButton != null;
+        if (Integer.valueOf(standingPassengerTV.getText().toString()) > 0) {
+            standingPassengerButton.setColorFilter(Color.BLUE);
+        } else {
+            standingPassengerButton.setColorFilter(Color.RED);
+            standingPassengerButton.setEnabled(false);
+            standingPassengerButton.setClickable(false);
+        }
+        standingPassengerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedSeat = 999;
+                ((ImageButton)(v.findViewById(R.id.selectSeatStandingBtn))).setColorFilter(Color.rgb(0, 100, 0));
+
+                if(lastSelectedPosition > -1) {
+                    View lastView = gridView.getChildAt(lastSelectedPosition);
+                    if(lastView != null) {
+                        ImageView lastImage = (ImageView) lastView.findViewById(R.id.seatImage);
+                        lastImage.clearColorFilter();
                     }
                 }
             }
@@ -223,7 +260,6 @@ public class NewTicketActivity extends AppCompatActivity {
                     startActivity(busStopSelectionIntent);
                 } else {
                     Toast.makeText(getApplicationContext(), "Debe seleccionar un asiento", Toast.LENGTH_LONG).show();
-                    //TODO: Agregar opción para standing passenger
                 }
             }
         });
@@ -238,11 +274,9 @@ public class NewTicketActivity extends AppCompatActivity {
             Integer occupiedPosition = occupied == null? -1 : occupied.indexOf(positionI);
             System.out.println("ocupado: " + occupiedPosition);
             Boolean result;
-            result = ((((positionI + 3) % 5) != 0) && occupiedPosition.intValue() == -1); //TODO: ...&& position no está en rango de libres
+            result = ((((positionI + 3) % 5) != 0) && occupiedPosition.intValue() == -1);
             System.out.println("result: "+result);
             return result;
-            // Return true for clickable, false for not
-            //return false;
         }
     }
 

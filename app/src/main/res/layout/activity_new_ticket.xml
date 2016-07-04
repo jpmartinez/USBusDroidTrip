@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Seleccione su Asiento"
+        android:text="Seleccione el Asiento"
         android:id="@+id/selectSeatTitle"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
@@ -30,7 +30,7 @@
         android:layout_height="70dp"
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/seatsGV"
-        android:layout_marginLeft="20.0dp"
+        android:layout_marginLeft="10.0dp"
         android:layout_marginTop="5.0dp"
         android:background="@drawable/steering_wheel"
         android:orientation="horizontal" >
@@ -63,5 +63,31 @@
         android:textColor="#ffffff"
         android:background="#34a902"
         />
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="80dp"
+        android:id="@+id/selectSeatStandingBtn"
+        android:src="@drawable/standing_passenger"
+        android:layout_alignEnd="@+id/seatsGV"
+        android:background="@null"
+        android:tint="#1117aa"
+        android:scaleType="fitXY"
+        android:paddingLeft="-15dp"
+        android:paddingRight="-15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="20"
+        android:id="@+id/selectSeatStandingTV"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/selectSeatTitle"
+        android:layout_alignEnd="@+id/confirmSeatBtn"
+        android:layout_toLeftOf="@+id/selectSeatStandingBtn"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:layout_marginRight="15dp" />
 
 </RelativeLayout>

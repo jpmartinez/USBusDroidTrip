@@ -62,11 +62,12 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="100dp"
+        android:layout_width="80dp"
         android:layout_height="match_parent"
         android:id="@+id/routeStopCheckIV"
         android:src="@drawable/check_mark"
         android:tint="#0c6500"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_marginLeft="-20dp" />
 
 </LinearLayout>

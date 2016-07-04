@@ -40,31 +40,30 @@ public class CTConfirmationActivity extends AppCompatActivity {
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    endJourneyREST = getString(R.string.URLupdateJourney,
-                            getString(R.string.URL_REST_API),
-                            getString(R.string.tenantId),
-                            onCourseJourney);
-                    JSONObject journeyPatch = new JSONObject();
-                    journeyPatch.put("status", JourneyStatus.ARRIVED);
+            try {
+                endJourneyREST = getString(R.string.URLupdateJourney,
+                        getString(R.string.URL_REST_API),
+                        getString(R.string.tenantId),
+                        onCourseJourney);
+                JSONObject journeyPatch = new JSONObject();
+                journeyPatch.put("status", JourneyStatus.ARRIVED);
+                //TODO: agregar envío de data de la "caja" en esta u otra llamada consecutiva
+                AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), endJourneyREST, "PATCH", journeyPatch).execute();
 
+                Toast.makeText(getApplicationContext(), "Viaje finalizado correctamente", Toast.LENGTH_LONG).show();
 
-                    AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), endJourneyREST, "PATCH", journeyPatch).execute();
+                editor.putString("onCourseJourney", "");
+                editor.putString("journey", "");
+                editor.putString("busId", "");
+                editor.putString("journeyId", "");
+                editor.apply();
 
-                    Toast.makeText(getApplicationContext(), "Viaje finalizado correctamente", Toast.LENGTH_LONG).show();
-
-                    editor.putString("onCourseJourney", "");
-                    editor.putString("journey", "");
-                    editor.putString("busId", "");
-                    editor.putString("journeyId", "");
-                    editor.apply();
-
-                    Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
-                    resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(resultIntent);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
+                resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(resultIntent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             }
         });
 
