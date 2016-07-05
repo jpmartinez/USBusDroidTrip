@@ -58,6 +58,7 @@ public class RouteStopListActivity extends ListActivity {
 
             routeStops = new JSONArray(sharedPreferences.getString("routeStops", ""));
             final List<RouteStop> routeStopsList = RouteStop.fromJson(routeStops);
+            routeStopsList.remove(0);
 
             routeStopsMap = new ArrayList<>();
 
@@ -122,7 +123,7 @@ public class RouteStopListActivity extends ListActivity {
                         ImageView checkIV = (ImageView) view.findViewById(R.id.routeStopCheckIV);
                         checkIV.setVisibility(View.VISIBLE);
                         try {
-                            routeStops.getJSONObject(position).put("status", "ARRIBADO");
+                            routeStops.getJSONObject(position+1).put("status", "ARRIBADO");
                             editor.putString("routeStops", routeStops.toString());
                             editor.apply();
 

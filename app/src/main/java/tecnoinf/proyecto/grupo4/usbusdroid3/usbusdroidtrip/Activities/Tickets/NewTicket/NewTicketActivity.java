@@ -210,7 +210,7 @@ public class NewTicketActivity extends AppCompatActivity {
                             (occupied == null || occupied.isEmpty() ||
                                     (!occupied.contains(lastSelectedPosition) &&
                                      !occupied.contains(position)))) {
-                        View lastView = parent.getChildAt(lastSelectedPosition);
+                        View lastView = parent.getChildAt(lastSelectedPosition - parent.getFirstVisiblePosition());
                         if (lastView != null) {
                             ImageView lastImage = (ImageView) lastView.findViewById(R.id.seatImage);
                             lastImage.clearColorFilter();
@@ -240,7 +240,7 @@ public class NewTicketActivity extends AppCompatActivity {
                 ((ImageButton)(v.findViewById(R.id.selectSeatStandingBtn))).setColorFilter(Color.rgb(0, 100, 0));
 
                 if(lastSelectedPosition > -1) {
-                    View lastView = gridView.getChildAt(lastSelectedPosition);
+                    View lastView = gridView.getChildAt(lastSelectedPosition - gridView.getFirstVisiblePosition());
                     if(lastView != null) {
                         ImageView lastImage = (ImageView) lastView.findViewById(R.id.seatImage);
                         lastImage.clearColorFilter();
