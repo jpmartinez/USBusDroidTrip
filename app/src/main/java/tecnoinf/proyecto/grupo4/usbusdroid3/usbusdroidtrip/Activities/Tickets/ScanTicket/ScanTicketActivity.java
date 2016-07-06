@@ -46,7 +46,9 @@ public class ScanTicketActivity extends AppCompatActivity implements View.OnClic
         //formatTxt = (TextView)findViewById(R.id.scan_format);
         //contentTxt = (TextView)findViewById(R.id.scan_content);
 
+        assert scanBtn != null;
         scanBtn.setOnClickListener(this);
+        scanBtn.callOnClick();
     }
 
     @Override
@@ -88,23 +90,25 @@ public class ScanTicketActivity extends AppCompatActivity implements View.OnClic
             try {
                 String scanContent = scanningResult.getContents();
 
-                JSONObject ticketScannedData = new JSONObject(scanContent);
-                ticketId = ticketScannedData.getString("id");
+                if(scanContent != null) {
+                    JSONObject ticketScannedData = new JSONObject(scanContent);
+                    //TODO: check if ticket is from same tenant
+                    ticketId = ticketScannedData.getString("id");
 
-                getTicketREST = getString(R.string.URLgetTicket,
-                        getString(R.string.URL_REST_API),
-                        getString(R.string.tenantId),
-                        ticketId);
+                    getTicketREST = getString(R.string.URLgetTicket,
+                            getString(R.string.URL_REST_API),
+                            getString(R.string.tenantId),
+                            ticketId);
 
-                Intent ticketDetailsIntent = new Intent(this, STShowDetailsActivity.class);
-                AsyncTask<Void, Void, JSONObject> ticketResult = new RestCallAsync(getApplicationContext(), getTicketREST, "GET", null).execute();
-                JSONObject ticketData = ticketResult.get();
-                //TODO: ver si el result es OK y ahí llamar al siguiente activity, caso contrario mostrar error correspondiente
-                JSONObject ticketJSON = new JSONObject(ticketData.getString("data"));
+                    Intent ticketDetailsIntent = new Intent(this, STShowDetailsActivity.class);
+                    AsyncTask<Void, Void, JSONObject> ticketResult = new RestCallAsync(getApplicationContext(), getTicketREST, "GET", null).execute();
+                    JSONObject ticketData = ticketResult.get();
+                    //TODO: ver si el result es OK y ahí llamar al siguiente activity, caso contrario mostrar error correspondiente
+                    JSONObject ticketJSON = new JSONObject(ticketData.getString("data"));
 
-                ticketDetailsIntent.putExtra("ticket", ticketJSON.toString());
-                startActivity(ticketDetailsIntent);
-
+                    ticketDetailsIntent.putExtra("ticket", ticketJSON.toString());
+                    startActivity(ticketDetailsIntent);
+                }
             } catch (JSONException | ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }

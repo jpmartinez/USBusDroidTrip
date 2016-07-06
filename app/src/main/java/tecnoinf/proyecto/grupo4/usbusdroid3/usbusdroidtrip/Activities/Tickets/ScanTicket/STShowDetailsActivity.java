@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ExecutionException;
 
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.TicketOptionsActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.TicketStatus;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
@@ -83,6 +84,8 @@ public class STShowDetailsActivity extends AppCompatActivity {
                         JSONObject ticketUpdated = new JSONObject(ticketData.getString("data"));
 
                         Toast.makeText(getApplicationContext(), ticketUpdated.getString("status"), Toast.LENGTH_LONG).show();
+                        finish();
+
                     } else if(ticket.getString("status").equalsIgnoreCase(TicketStatus.USED.toString()) ||
                               ticket.getString("status").equalsIgnoreCase(TicketStatus.CANCELED.toString()) ){
                         Toast.makeText(getApplicationContext(), R.string.used_canceled_ticket, Toast.LENGTH_LONG).show();
@@ -94,9 +97,10 @@ public class STShowDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        //TODO: add back button, in usecase of just checking ticket already confirmed
-
-
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getBaseContext(), TicketOptionsActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 }

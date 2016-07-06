@@ -85,4 +85,15 @@
         </LinearLayout>
     </ScrollView>
 
+    <ImageButton
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/settingsBtn"
+        android:layout_below="@+id/login_form"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="88dp"
+        android:src="@drawable/settings_wheel"
+        android:background="@null"
+        android:scaleType="fitXY" />
+
 </RelativeLayout>

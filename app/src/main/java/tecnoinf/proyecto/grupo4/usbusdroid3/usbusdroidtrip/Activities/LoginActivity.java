@@ -17,12 +17,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCall;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.SettingsActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -35,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private EditText mPasswordView;
+    private ImageButton settingsButton;
     private AutoCompleteTextView mEmailView;
     private Button loginButton;
 
@@ -45,13 +48,13 @@ public class LoginActivity extends AppCompatActivity {
 
         loginURL = getString(R.string.URLlogin, getString(R.string.URL_REST_API));
         sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
-//        saved_password = sharedPreferences.getString("password", "first_use");
-//        if(!saved_password.equalsIgnoreCase("first_use")) {
-//            saved_username = sharedPreferences.getString("username", "");
-//
-//            mAuthTask = new UserLoginTask(saved_username, saved_password, getApplicationContext(), "twitter");
-//            mAuthTask.execute((Void) null);
-//        }
+
+        String savedServerIP = sharedPreferences.getString("serverIP", "");
+        String savedPort = sharedPreferences.getString("port", "");
+
+        if (!savedServerIP.isEmpty() && !savedPort.isEmpty()) {
+            loginURL = loginURL.replace("10.0.2.2", savedServerIP).replace(":8080", ":"+savedPort);
+        }
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -66,6 +69,16 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
             }
         });
+
+        settingsButton = (ImageButton) findViewById(R.id.settingsBtn);
+        assert settingsButton != null;
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settingsIntent = new Intent(getBaseContext(), SettingsActivity.class);
+                startActivity(settingsIntent);
+            }
+        });
     }
 
     private void attemptLogin() {
@@ -73,25 +86,21 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
-        // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password) || password.length() < 4) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
@@ -99,13 +108,10 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
             showProgress(true);
+
             mAuthTask = new UserLoginTask(email, password, getApplicationContext(), "usbus");
             mAuthTask.execute((Void) null);
         }
@@ -143,6 +149,7 @@ public class LoginActivity extends AppCompatActivity {
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            settingsButton.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -210,8 +217,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 finish();
             } else {
+                showProgress(false);
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
+                Intent loginIntent = new Intent(getBaseContext(), LoginActivity.class);
+                startActivity(loginIntent);
+
+                finish();
             }
         }
 

@@ -78,7 +78,7 @@
         android:layout_toEndOf="@+id/seatLbl" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:text="Confirmar Pasaje"
         android:id="@+id/confirmTicketBtn"
@@ -104,6 +104,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/statusTV"
         android:layout_alignTop="@+id/statusLbl"
-        android:layout_alignStart="@+id/confirmTicketBtn" />
+        android:layout_toRightOf="@+id/statusLbl" />
 
 </RelativeLayout>

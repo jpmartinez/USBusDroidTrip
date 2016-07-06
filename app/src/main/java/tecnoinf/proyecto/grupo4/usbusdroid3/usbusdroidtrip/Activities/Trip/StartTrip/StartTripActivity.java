@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
-import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.DayConverter_ES;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.DayLangConverter;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.JourneyShort;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.JourneyStatus;
@@ -56,7 +56,7 @@ public class StartTripActivity extends ListActivity {
                 HashMap<String, String> j = new HashMap<>();
                 j.put("id", js2.getId().toString());
                 j.put("name", js2.getName());
-                j.put("day", DayConverter_ES.convertES(js2.getDay()));
+                j.put("day", DayLangConverter.convertToES(js2.getDay()));
                 j.put("date", dateFormat.format(js2.getDate()));
                 j.put("time", timeFormat.format(js2.getTime()));
                 j.put("busNumber", js2.getBusNumber().toString());
