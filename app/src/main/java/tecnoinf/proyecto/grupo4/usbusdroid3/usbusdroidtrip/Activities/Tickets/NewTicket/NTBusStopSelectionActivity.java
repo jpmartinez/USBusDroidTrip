@@ -80,7 +80,7 @@ public class NTBusStopSelectionActivity extends AppCompatActivity {
 
                             AsyncTask<Void, Void, JSONObject> priceResult = new RestCallAsync(getApplicationContext(), ticketPriceRest, "GET", null).execute();
                             JSONObject priceData = priceResult.get();
-                            String ticketPrice = priceData.getString("data");
+                            String ticketPrice = priceData.getJSONObject("data").getString("price");
 
                             Intent confirmationIntent = new Intent(v.getContext(), NTConfirmationActivity.class);
                             confirmationIntent.putExtra("journey", journey.toString());
