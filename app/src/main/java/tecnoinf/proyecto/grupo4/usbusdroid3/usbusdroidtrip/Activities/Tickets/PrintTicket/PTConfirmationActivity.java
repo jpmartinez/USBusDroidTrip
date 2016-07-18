@@ -56,7 +56,7 @@ public class PTConfirmationActivity extends AppCompatActivity {
             TextView ticketCostTV = (TextView) findViewById(R.id.ticketCostTV);
             qrCodeBtn = (ImageButton) findViewById(R.id.qrCodeBtn);
             assert ticketCostTV != null;
-            ticketCostTV.setText(String.valueOf(ticket.getDouble("amount")));
+            ticketCostTV.setText(String.format("%.2f", ticket.getDouble("amount")));
             assert ticketSeatTV != null;
             ticketSeatTV.setText(ticket.getInt("seat") == 999?"De pie" : String.valueOf(ticket.getInt("seat")));
             assert ticketOriginTV != null;

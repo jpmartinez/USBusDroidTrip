@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">USBusDroid Trip</string>
+    <string name="app_name">USBusTrip</string>
 
     <string name="action_sign_in">Iniciar sesión</string>
     <string name="prompt_username">Usuario</string>
@@ -14,7 +14,7 @@
     <string name="Seat_01">01</string>
 
     <!--Tenant ID-->
-    <string name="tenantId">2</string>
+    <string name="tenantId">1</string>
 
     <!--REST URLs-->
     <string name="URL_REST_API">http://10.0.2.2:8080/rest/api</string>
