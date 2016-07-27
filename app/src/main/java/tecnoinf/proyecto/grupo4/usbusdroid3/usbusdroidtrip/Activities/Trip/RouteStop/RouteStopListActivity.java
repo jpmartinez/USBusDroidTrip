@@ -2,9 +2,11 @@ package tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.Rout
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.MainActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.TicketOptionsActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.RestCallAsync;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.RouteStop;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
@@ -57,6 +61,7 @@ public class RouteStopListActivity extends ListActivity {
             ticketsArray = new JSONArray(sharedPreferences.getString("ticketsArray", ""));
 
             routeStops = new JSONArray(sharedPreferences.getString("routeStops", ""));
+            Log.d("routeStops: ", routeStops.toString());
             final List<RouteStop> routeStopsList = RouteStop.fromJson(routeStops);
             routeStopsList.remove(0);
 
@@ -176,5 +181,10 @@ public class RouteStopListActivity extends ListActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 }

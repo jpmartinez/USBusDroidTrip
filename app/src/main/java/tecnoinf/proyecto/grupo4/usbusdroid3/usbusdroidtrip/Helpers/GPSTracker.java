@@ -1,6 +1,8 @@
 package tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,9 +16,21 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.RouteStop.RouteStopListActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.RouteStop;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
 
 import static android.location.Location.distanceBetween;
 import static android.support.v4.app.ActivityCompat.requestPermissions;
@@ -27,6 +41,9 @@ import static android.support.v4.app.ActivityCompat.requestPermissions;
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;
+    private ArrayList<RouteStop> routeStops;
+    private Double routeStopMinDistance = 5.0;
+    private final int routeStopNotificationId = 142;
 
     // flag for GPS status
     boolean isGPSEnabled = false;
@@ -50,8 +67,12 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    public GPSTracker(Context context) {
+    public GPSTracker(Context context) throws JSONException {
         this.mContext = context;
+        SharedPreferences sharedPreferences = context.getSharedPreferences("USBusData", Context.MODE_PRIVATE);
+        JSONArray routeStopsJSON = new JSONArray(sharedPreferences.getString("routeStops", ""));
+        routeStops = RouteStop.fromJson(routeStopsJSON);
+        routeStops.remove(0);
         getLocation();
     }
 
@@ -130,17 +151,82 @@ public class GPSTracker extends Service implements LocationListener {
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("USBusData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
         double prevLat = Double.parseDouble(sharedPreferences.getString("prevLat", "0.0"));
         double prevLng = Double.parseDouble(sharedPreferences.getString("prevLng", "0.0"));
 
         //double distance = distance(prevLat, prevLng, location.getLatitude(), location.getLongitude());
         float[] distance = new float[1];
-        distanceBetween(prevLat, prevLng, location.getLatitude(), location.getLongitude(), distance);
-        Toast.makeText(mContext, "Your Location is - \nLat: " + latitude + "\nLong: " + longitude + "\ndist: " + distance[0]/1000, Toast.LENGTH_LONG).show();
 
-        editor.putString("prevLat", String.valueOf(location.getLatitude()));
-        editor.putString("prevLng", String.valueOf(location.getLongitude()));
-        editor.apply();
+        System.out.println("min distance: " + String.valueOf(routeStopMinDistance));
+        for (RouteStop rs : routeStops) {
+            System.out.println("=)=)=)=)=)=)=)=)rs: "+rs.getBusStop()+rs.getStatus()+rs.getLatitude());
+            if(rs.getStatus().equalsIgnoreCase("PENDIENTE")) {
+                distanceBetween(rs.getLatitude(), rs.getLongitude(), location.getLatitude(), location.getLongitude(), distance);
+
+                System.out.println("distance to " + rs.getBusStop() + " :" + String.valueOf(distance[0]/1000));
+
+                if (distance[0] <= routeStopMinDistance) {
+                    System.out.println("arribando a: " + rs.getBusStop());
+                    //TODO: Llamar a los métodos de RouteStopListActivity.java:124-170 para actualizar el seatstate
+
+                    rs.setStatus("ARRIBADO");
+
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(mContext)
+                                    .setSmallIcon(R.drawable.bus_stop_sign)
+                                    .setContentTitle("Próxima Parada a 5KM !")
+                                    .setContentText(rs.getBusStop());
+                    // Creates an explicit intent for an Activity in your app
+                    Intent resultIntent = new Intent(mContext, RouteStopListActivity.class);
+
+                    // The stack builder object will contain an artificial back stack for the
+                    // started Activity.
+                    // This ensures that navigating backward from the Activity leads out of
+                    // your application to the Home screen.
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+
+                    // Adds the back stack for the Intent (but not the Intent itself)
+                    stackBuilder.addParentStack(RouteStopListActivity.class);
+
+                    // Adds the Intent that starts the Activity to the top of the stack
+                    stackBuilder.addNextIntent(resultIntent);
+                    PendingIntent resultPendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    mBuilder.setContentIntent(resultPendingIntent);
+                    NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                    // mId allows you to update the notification later on.
+                    mNotificationManager.notify(routeStopNotificationId, mBuilder.build());
+                    //TODO: guardar las routeStops con status actualizado en sharedPreferences, para verlas bien en RouteStopListActivity
+                    //TODO: verificar que en RouteStopListActivity se estén tomando de las shared preferences (o tomarlas y si es "" usar las del journey)
+
+                    try {
+                        JSONArray jsonArray = new JSONArray();
+                        jsonArray.put(routeStops.get(0).getJSONObject());
+                        for (int i=0; i < routeStops.size(); i++) {
+                            jsonArray.put(routeStops.get(i).getJSONObject());
+                        }
+
+                        editor.putString("routeStops", jsonArray.toString());
+                        editor.apply();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+                }
+            }
+        }
+
+//        distanceBetween(prevLat, prevLng, location.getLatitude(), location.getLongitude(), distance);
+//        Toast.makeText(mContext, "Your Location is - \nLat: " + latitude + "\nLong: " + longitude + "\ndist: " + distance[0]/1000, Toast.LENGTH_LONG).show();
+//
+//        editor.putString("prevLat", String.valueOf(location.getLatitude()));
+//        editor.putString("prevLng", String.valueOf(location.getLongitude()));
+//        editor.apply();
     }
 
     @Override

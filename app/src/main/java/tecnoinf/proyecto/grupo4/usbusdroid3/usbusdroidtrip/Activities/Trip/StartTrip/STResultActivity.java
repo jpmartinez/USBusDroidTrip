@@ -1,8 +1,11 @@
 package tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.StartTrip;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +18,7 @@ import org.json.JSONObject;
 
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.MainActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.TripOptionsActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.GPSTracker;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.JourneyStatus;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
 
@@ -27,6 +31,12 @@ public class STResultActivity extends AppCompatActivity {
     private Boolean success = false;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+
+    GPSTracker gps;
+    private static final String[] INITIAL_PERMS={
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +63,13 @@ public class STResultActivity extends AppCompatActivity {
                 editor.putBoolean("odometerSet", false);
                 editor.putString("busId", journey.getJSONObject("bus").getString("id"));
 
-                for (int i = 0; i<journey
+                for (int i = 0;
+                     i < journey
                         .getJSONObject("service")
                         .getJSONObject("route")
                         .getJSONArray("busStops")
-                        .length(); i++ ) {
+                        .length();
+                     i++ ) {
 
                     journey.getJSONObject("service")
                             .getJSONObject("route")
@@ -71,6 +83,18 @@ public class STResultActivity extends AppCompatActivity {
                                                 .getJSONArray("busStops").toString());
                 editor.apply();
                 success = true;
+
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, INITIAL_PERMS, 42);
+                }
+
+                try {
+
+                    gps = new GPSTracker(getApplicationContext());
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             } else {
                 message.setText("Ha ocurrido un error iniciando el viaje\n Intente nuevamente");
                 success = false;

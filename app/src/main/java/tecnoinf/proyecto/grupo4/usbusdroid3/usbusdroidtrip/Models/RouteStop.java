@@ -12,8 +12,10 @@ import java.util.ArrayList;
 public class RouteStop {
     private String busStop;
     private Double km;
-    private boolean isCombinationPoint;
+    private boolean combinationPoint;
     private String status;
+    private Double latitude;
+    private Double longitude;
 
     public String getStatus() {
         return status;
@@ -40,18 +42,36 @@ public class RouteStop {
     }
 
     public boolean isCombinationPoint() {
-        return isCombinationPoint;
+        return combinationPoint;
     }
 
     public void setCombinationPoint(boolean combinationPoint) {
-        isCombinationPoint = combinationPoint;
+        this.combinationPoint = combinationPoint;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public RouteStop(JSONObject object){
         try {
             busStop = object.getString("busStop");
             km = object.getDouble("km");
-            isCombinationPoint = object.getBoolean("combinationPoint");
+            combinationPoint = object.getBoolean("combinationPoint");
+            latitude = object.getDouble("latitude");
+            longitude = object.getDouble("longitude");
             if(object.has("status")) {
                 status = object.getString("status");
             }
@@ -71,5 +91,16 @@ public class RouteStop {
             }
         }
         return routeStops;
+    }
+
+    public JSONObject getJSONObject() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("busStop", busStop);
+        obj.put("km", km);
+        obj.put("combinationPoint", combinationPoint);
+        obj.put("status", status);
+        obj.put("latitude", latitude);
+        obj.put("longitude", longitude);
+        return obj;
     }
 }

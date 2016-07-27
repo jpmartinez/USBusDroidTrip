@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.TicketOptionsActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.TripOptionsActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.GPSTracker;
@@ -27,11 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
     private String onCourseJourney;
 
-    GPSTracker gps;
-    private static final String[] INITIAL_PERMS={
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-    };
+//    GPSTracker gps;
+//    private static final String[] INITIAL_PERMS={
+//            Manifest.permission.ACCESS_FINE_LOCATION,
+//            Manifest.permission.ACCESS_COARSE_LOCATION
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +43,17 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
         onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
 
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, INITIAL_PERMS, 42);
-        }
-
-        gps = new GPSTracker(MainActivity.this);
+//        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(MainActivity.this, INITIAL_PERMS, 42);
+//        }
+//
+//        try {
+//
+//            gps = new GPSTracker(MainActivity.this);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         // check if GPS enabled
 //        if(gps.canGetLocation()){
 //            double latitude = gps.getLatitude();
