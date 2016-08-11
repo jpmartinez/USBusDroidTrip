@@ -72,7 +72,7 @@ public class GPSTracker extends Service implements LocationListener {
         SharedPreferences sharedPreferences = context.getSharedPreferences("USBusData", Context.MODE_PRIVATE);
         JSONArray routeStopsJSON = new JSONArray(sharedPreferences.getString("routeStops", ""));
         routeStops = RouteStop.fromJson(routeStopsJSON);
-        routeStops.remove(0);
+        //routeStops.remove(0);
         getLocation();
     }
 
@@ -169,14 +169,17 @@ public class GPSTracker extends Service implements LocationListener {
                 if (distance[0] <= routeStopMinDistance) {
                     System.out.println("arribando a: " + rs.getBusStop());
                     //TODO: Llamar a los métodos de RouteStopListActivity.java:124-170 para actualizar el seatstate
+                    //TODO: No haría falta con el nuevo método de occupiedSeats ya implementado en cliente (pasarlo a trip)
 
                     rs.setStatus("ARRIBADO");
 
                     NotificationCompat.Builder mBuilder =
                             new NotificationCompat.Builder(mContext)
                                     .setSmallIcon(R.drawable.bus_stop_sign)
-                                    .setContentTitle("Próxima Parada a 5KM !")
-                                    .setContentText(rs.getBusStop());
+                                    .setWhen(System.currentTimeMillis())
+                                    .setTicker("Llegando a " + rs.getBusStop() + "!!!")
+                                    .setContentTitle("Próxima Parada a 5Km !")
+                                    .setContentText("Arribando a " + rs.getBusStop());
                     // Creates an explicit intent for an Activity in your app
                     Intent resultIntent = new Intent(mContext, RouteStopListActivity.class);
 
@@ -200,6 +203,7 @@ public class GPSTracker extends Service implements LocationListener {
                     NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                     // mId allows you to update the notification later on.
                     mNotificationManager.notify(routeStopNotificationId, mBuilder.build());
+
                     //TODO: guardar las routeStops con status actualizado en sharedPreferences, para verlas bien en RouteStopListActivity
                     //TODO: verificar que en RouteStopListActivity se estén tomando de las shared preferences (o tomarlas y si es "" usar las del journey)
 

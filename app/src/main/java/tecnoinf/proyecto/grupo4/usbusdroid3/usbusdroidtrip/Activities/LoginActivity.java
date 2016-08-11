@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private String saved_username;
     private String saved_password;
+    private String saved_tenantId;
     private UserLoginTask mAuthTask = null;
     private View mProgressView;
     private View mLoginFormView;
@@ -51,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
         String savedServerIP = sharedPreferences.getString("serverIP", "");
         String savedPort = sharedPreferences.getString("port", "");
+        saved_tenantId = sharedPreferences.getString("tenantId", "");
 
         if (!savedServerIP.isEmpty() && !savedPort.isEmpty()) {
             loginURL = loginURL.replace("10.0.2.2", savedServerIP).replace(":8080", ":"+savedPort);
@@ -176,7 +178,11 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 JSONObject credentials = new JSONObject();
                 credentials.put("username", username);
-                credentials.put("tenantId", mCtx.getString(R.string.tenantId));
+                if(saved_tenantId.isEmpty()) {
+                    credentials.put("tenantId", mCtx.getString(R.string.tenantId));
+                } else {
+                    credentials.put("tenantId", saved_tenantId);
+                }
                 credentials.put("password", mPassword);
 
                 RestCall call = new RestCall(loginURL, "POST", credentials, null);
@@ -192,7 +198,11 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("token", token);
                     editor.putString("username", username);
                     editor.putString("password", mPassword);
-                    editor.putString("tenantId", getString(R.string.tenantId));
+                    if(saved_tenantId.isEmpty()) {
+                        editor.putString("tenantId", getString(R.string.tenantId));
+                    } else {
+                        editor.putString("tenantId", saved_tenantId);
+                    }
                     editor.putString("loginURL", loginURL);
                     editor.apply();
                 } else {

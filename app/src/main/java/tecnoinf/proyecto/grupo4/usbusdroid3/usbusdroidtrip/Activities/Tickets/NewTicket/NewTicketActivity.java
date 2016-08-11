@@ -176,9 +176,9 @@ public class NewTicketActivity extends AppCompatActivity {
                 if (!occupiedJSONArray.getJSONObject(i).getBoolean("free")) {
                     occupiedSeat = occupiedJSONArray.getJSONObject(i).getInt("number");
                     occupiedPosition = seat2Position(occupiedSeat);
-                    System.out.println("Seat: "+occupiedSeat + "  Position: " + occupiedPosition);
+                    //System.out.println("Seat: "+occupiedSeat + "  Position: " + occupiedPosition);
 
-                    System.out.println("adding to occupied: " + occupiedPosition);
+                    //System.out.println("adding to occupied: " + occupiedPosition);
                     occupied.add(occupiedPosition);
                 }
             }
@@ -254,10 +254,18 @@ public class NewTicketActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(selectedSeat > 0) {
-                    Intent busStopSelectionIntent = new Intent(getBaseContext(), NTBusStopSelectionActivity.class);
-                    busStopSelectionIntent.putExtra("seat", String.valueOf(selectedSeat));
-                    busStopSelectionIntent.putExtra("journey", father.getStringExtra("journey"));
-                    startActivity(busStopSelectionIntent);
+                    Intent confirmIntent = new Intent(getBaseContext(), NTConfirmationActivity.class);
+                    confirmIntent.putExtra("seat", String.valueOf(selectedSeat));
+                    confirmIntent.putExtra("journey", father.getStringExtra("journey"));
+                    confirmIntent.putExtra("ticketPrice", father.getStringExtra("ticketPrice"));
+                    confirmIntent.putExtra("origin", father.getStringExtra("origin"));
+                    confirmIntent.putExtra("destination", father.getStringExtra("destination"));
+                    startActivity(confirmIntent);
+
+//                    Intent busStopSelectionIntent = new Intent(getBaseContext(), NTBusStopSelectionActivity.class);
+//                    busStopSelectionIntent.putExtra("seat", String.valueOf(selectedSeat));
+//                    busStopSelectionIntent.putExtra("journey", father.getStringExtra("journey"));
+//                    startActivity(busStopSelectionIntent);
                 } else {
                     Toast.makeText(getApplicationContext(), "Debe seleccionar un asiento", Toast.LENGTH_LONG).show();
                 }

@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
 
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.CancelTicket.CancelTicketListActivity;
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.NewTicket.NTBusStopSelectionActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.NewTicket.NewTicketActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.PrintTicket.PrintTicketListActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.ScanTicket.ScanTicketActivity;
@@ -85,11 +86,15 @@ public class TicketOptionsActivity extends AppCompatActivity {
 //                        standing++;
 //                    }
 //                }
-
-                Intent newTicketIntent = new Intent(getApplicationContext(), NewTicketActivity.class);
-                newTicketIntent.putExtra("journey", journeyData.getString("data"));
-                newTicketIntent.putExtra("standingCurrent", standingCurrent);
-                startActivity(newTicketIntent);
+                Intent selectStopsIntent = new Intent(getBaseContext(), NTBusStopSelectionActivity.class);
+                selectStopsIntent.putExtra("journey", journeyData.getString("data"));
+                selectStopsIntent.putExtra("standingCurrent", standingCurrent);
+                startActivity(selectStopsIntent);
+//
+//                Intent newTicketIntent = new Intent(getApplicationContext(), NewTicketActivity.class);
+//                newTicketIntent.putExtra("journey", journeyData.getString("data"));
+//                newTicketIntent.putExtra("standingCurrent", standingCurrent);
+//                startActivity(newTicketIntent);
 
             } catch (InterruptedException | ExecutionException | JSONException e) {
                 e.printStackTrace();

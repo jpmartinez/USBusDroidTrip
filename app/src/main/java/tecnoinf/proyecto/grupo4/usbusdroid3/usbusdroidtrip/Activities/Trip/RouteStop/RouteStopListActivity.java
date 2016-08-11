@@ -63,7 +63,7 @@ public class RouteStopListActivity extends ListActivity {
             routeStops = new JSONArray(sharedPreferences.getString("routeStops", ""));
             Log.d("routeStops: ", routeStops.toString());
             final List<RouteStop> routeStopsList = RouteStop.fromJson(routeStops);
-            routeStopsList.remove(0);
+            //routeStopsList.remove(0);
 
             routeStopsMap = new ArrayList<>();
 

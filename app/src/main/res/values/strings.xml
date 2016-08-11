@@ -14,7 +14,7 @@
     <string name="Seat_01">01</string>
 
     <!--Tenant ID-->
-    <string name="tenantId">1</string>
+    <string name="tenantId">2</string>
 
     <!--REST URLs-->
     <string name="URL_REST_API">http://10.0.2.2:8080/rest/api</string>
@@ -37,6 +37,8 @@
     <string name="URLgetTickets"><![CDATA[%1$s/%2$s/ticket?journeyId=%3$s&offset=0&limit=999]]></string>
     <string name="URLupdateTicket"><![CDATA[%1$s/%2$s/ticket/%3$s]]></string>
     <string name="URLdeleteTicket"><![CDATA[%1$s/%2$s/ticket/%3$s]]></string>
+    <string name="URLoccupiedSeats"><![CDATA[%1$s/%2$s/ticket?query=%3$s&journeyId=%4$s&routeStopKmA=%5$s&routeStopKmB=%6$s&offset=0&limit=20]]></string>
+
 
     <!--Mundane Strings-->
     <string name="bluebusimage">BlueBusImage</string>

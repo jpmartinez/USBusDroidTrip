@@ -26,7 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.MainActivity" />
+        <activity android:name=".Activities.MainActivity"
+            android:label="Main Activity Title"/>
         <activity android:name=".Activities.Tickets.TicketOptionsActivity" />
         <activity android:name=".Activities.Trip.TripOptionsActivity" />
         <activity android:name=".Activities.Tickets.ScanTicket.ScanTicketActivity" />

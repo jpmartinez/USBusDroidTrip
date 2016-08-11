@@ -30,6 +30,7 @@ public class RestCallAsync extends AsyncTask<Void, Void, JSONObject> {
     private String saved_username;
     private String saved_password;
     private String saved_type;
+    private String saved_tenantId;
     private String token;
     private String tenantId;
     private String loginURL;
@@ -56,6 +57,7 @@ public class RestCallAsync extends AsyncTask<Void, Void, JSONObject> {
         sharedPreferences = mCtx.getSharedPreferences("USBusData", Context.MODE_PRIVATE);
         saved_username = sharedPreferences.getString("username", "");
         saved_password = sharedPreferences.getString("password", "");
+        saved_tenantId = sharedPreferences.getString("tenantId", "");
         saved_type = sharedPreferences.getString("user_type", "");
         token = sharedPreferences.getString("token", "");
         tenantId = sharedPreferences.getString("tenantId", "");
@@ -98,6 +100,9 @@ public class RestCallAsync extends AsyncTask<Void, Void, JSONObject> {
 
         if (!savedServerIP.isEmpty() && !savedPort.isEmpty()) {
             restURL = restURL.replace("10.0.2.2", savedServerIP).replace(":8080", ":"+savedPort);
+        }
+        if (!saved_tenantId.isEmpty()) {
+            restURL = restURL.replace("rest/api/"+mCtx.getString(R.string.tenantId)+"/", "rest/api/"+saved_tenantId+"/");
         }
 
         if(this.restURL == null || this.restURL.isEmpty()) {
