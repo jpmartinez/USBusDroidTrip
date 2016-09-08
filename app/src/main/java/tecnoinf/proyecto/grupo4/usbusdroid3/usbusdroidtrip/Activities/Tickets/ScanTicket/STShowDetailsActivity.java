@@ -77,7 +77,7 @@ public class STShowDetailsActivity extends AppCompatActivity {
                         JSONObject ticketConfirmation = new JSONObject();
                         ticketConfirmation.put("tenantId", ticket.get("tenantId"));
                         ticketConfirmation.put("id", ticketId);
-                        ticketConfirmation.put("status", TicketStatus.USED);
+                        ticketConfirmation.put("status", TicketStatus.INUSE);
 
                         AsyncTask<Void, Void, JSONObject> ticketUpdateResult = new RestCallAsync(getApplicationContext(), confirmTicketREST, "PUT", ticketConfirmation).execute();
                         JSONObject ticketData = ticketUpdateResult.get();
@@ -87,10 +87,11 @@ public class STShowDetailsActivity extends AppCompatActivity {
                         finish();
 
                     } else if(ticket.getString("status").equalsIgnoreCase(TicketStatus.USED.toString()) ||
-                              ticket.getString("status").equalsIgnoreCase(TicketStatus.CANCELED.toString()) ){
+                              ticket.getString("status").equalsIgnoreCase(TicketStatus.CANCELED.toString()) ||
+                              ticket.getString("status").equalsIgnoreCase(TicketStatus.INUSE.toString()) ){
                         Toast.makeText(getApplicationContext(), R.string.used_canceled_ticket, Toast.LENGTH_LONG).show();
                     } else if(ticket.getJSONObject("journey").getString("id").equalsIgnoreCase(onCourseJourney)) {
-
+                        //TODO: recordar qué pretendía con esta condición
                     }
                 } catch (InterruptedException | ExecutionException | JSONException e) {
                     e.printStackTrace();

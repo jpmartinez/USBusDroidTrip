@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Parcel.ParcelOptionsActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Tickets.TicketOptionsActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.TripOptionsActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Helpers.GPSTracker;
@@ -29,12 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
     private String onCourseJourney;
 
-//    GPSTracker gps;
-//    private static final String[] INITIAL_PERMS={
-//            Manifest.permission.ACCESS_FINE_LOCATION,
-//            Manifest.permission.ACCESS_COARSE_LOCATION
-//    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,32 +38,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
         onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
 
-//        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(MainActivity.this, INITIAL_PERMS, 42);
-//        }
-//
-//        try {
-//
-//            gps = new GPSTracker(MainActivity.this);
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        // check if GPS enabled
-//        if(gps.canGetLocation()){
-//            double latitude = gps.getLatitude();
-//            double longitude = gps.getLongitude();
-//            // \n is for new line
-//            Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-//        }else{
-//            // can't get location
-//            // GPS or Network is not enabled
-//            // Ask user to enable GPS/network in settings
-//            gps.showSettingsAlert();
-//        }
-
         ImageButton ticketOptionsBt = (ImageButton) findViewById(R.id.ticketOptionsButton);
         ImageButton tripOptionsBt = (ImageButton) findViewById(R.id.tripOptionsButton);
+        ImageButton parcelOptionsBt = (ImageButton) findViewById(R.id.parcelOptionsButton);
 
         assert ticketOptionsBt != null;
         ticketOptionsBt.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +61,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent myTicketsIntent = new Intent(v.getContext(), TripOptionsActivity.class);
                 startActivity(myTicketsIntent);
+            }
+        });
+
+        assert parcelOptionsBt != null;
+        parcelOptionsBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onCourseJourney != null && !onCourseJourney.isEmpty()){
+                    Intent parcelsIntent = new Intent(getBaseContext(), ParcelOptionsActivity.class);
+                    startActivity(parcelsIntent);
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.no_open_trip, Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

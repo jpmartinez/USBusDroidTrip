@@ -24,11 +24,13 @@ public class SettingsActivity extends AppCompatActivity {
         final EditText portET = (EditText) findViewById(R.id.settingsPortET);
         final EditText tenantIdET = (EditText) findViewById(R.id.settingsTenantIdET);
         Button applyBtn = (Button) findViewById(R.id.settingsApplyBtn);
+        Button clearBtn = (Button) findViewById(R.id.settingsCleanShPrBtn);
 
         assert serverET != null;
         assert portET != null;
         assert tenantIdET != null;
         assert applyBtn != null;
+        assert clearBtn != null;
 
         applyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +43,6 @@ public class SettingsActivity extends AppCompatActivity {
                     String serverIP = serverET.getText().toString();
                     String port = portET.getText().toString();
                     String tenantId = tenantIdET.getText().toString();
-
 
                     SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -66,6 +67,18 @@ public class SettingsActivity extends AppCompatActivity {
                     Intent loginIntent = new Intent(getBaseContext(), LoginActivity.class);
                     startActivity(loginIntent);
                 }
+            }
+        });
+
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
+
+                Toast.makeText(getBaseContext(), "Datos eliminados correctamente", Toast.LENGTH_LONG).show();
             }
         });
     }

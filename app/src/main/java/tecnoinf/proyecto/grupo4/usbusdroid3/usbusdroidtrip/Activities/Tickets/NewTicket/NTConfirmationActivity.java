@@ -123,11 +123,13 @@ public class NTConfirmationActivity extends AppCompatActivity {
                     newTicket.put("sellerName", username);
                     newTicket.put("seat", father.getStringExtra("seat"));
                     newTicket.put("closed", true);
-                    newTicket.put("status", TicketStatus.CONFIRMED);
+                    newTicket.put("status", TicketStatus.INUSE);
                     newTicket.put("routeId", journey.getJSONObject("service").getJSONObject("route").get("id"));
                     newTicket.put("paymentToken", "droid_cash");
                     newTicket.put("branchId", 0);
                     newTicket.put("windowId", 0);
+                    newTicket.put("kmGetsOn", father.getDoubleExtra("originKm", 0.0));
+                    newTicket.put("kmGetsOff", father.getDoubleExtra("destinationKm", 0.0));
 
                     AsyncTask<Void, Void, JSONObject> ticketResult = new RestCallAsync(getApplicationContext(), buyTicketRest, "POST", newTicket).execute();
                     ticketData = ticketResult.get();

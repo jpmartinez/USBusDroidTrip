@@ -70,14 +70,17 @@ public class JourneyShort {
 
     public JourneyShort(JSONObject object) throws ParseException {
         try {
+            Date journeyDateTime = new Date();
+            journeyDateTime.setTime(Long.valueOf(object.getString("date")));
+
             id = object.getLong("id");
             name = object.getJSONObject("service").getString("name");
             day = DayOfWeek.valueOf(object.getJSONObject("service").getString("day"));
             //time = new SimpleDateFormat("HH:mm").parse(object.getJSONObject("service").getString("time"));
-            time = new Date();
-            time.setTime(Long.valueOf(object.getJSONObject("service").getString("time")));
-            date = new Date();
-            date.setTime(Long.valueOf(object.getString("date")));
+            time = journeyDateTime;
+            //time.setTime(Long.valueOf(object.getJSONObject("service").getString("time")));
+            date = journeyDateTime;
+            //date.setTime(Long.valueOf(object.getString("date")));
             //date = new SimpleDateFormat("dd/MM/yyyy").parse(object.getString("date"));
             busNumber = object.getInt("busNumber");
         } catch (JSONException e) {

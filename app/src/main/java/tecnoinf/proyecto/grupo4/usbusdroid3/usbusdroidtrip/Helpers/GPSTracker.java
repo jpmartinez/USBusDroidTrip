@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -27,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Trip.RouteStop.RouteStopListActivity;
 import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Models.RouteStop;
@@ -42,12 +44,14 @@ public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;
     private ArrayList<RouteStop> routeStops;
+    private JSONArray routeStopsJSON;
     private Double routeStopMinDistance = 5.0;
     private final int routeStopNotificationId = 142;
+    private String onCourseJourney;
+    private Integer standingCurrent;
 
     // flag for GPS status
     boolean isGPSEnabled = false;
-
 
     // flag for network status
     boolean isNetworkEnabled = false;
@@ -70,9 +74,9 @@ public class GPSTracker extends Service implements LocationListener {
     public GPSTracker(Context context) throws JSONException {
         this.mContext = context;
         SharedPreferences sharedPreferences = context.getSharedPreferences("USBusData", Context.MODE_PRIVATE);
-        JSONArray routeStopsJSON = new JSONArray(sharedPreferences.getString("routeStops", ""));
+        routeStopsJSON = new JSONArray(sharedPreferences.getString("routeStops", ""));
         routeStops = RouteStop.fromJson(routeStopsJSON);
-        //routeStops.remove(0);
+        onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
         getLocation();
     }
 
@@ -160,7 +164,7 @@ public class GPSTracker extends Service implements LocationListener {
 
         System.out.println("min distance: " + String.valueOf(routeStopMinDistance));
         for (RouteStop rs : routeStops) {
-            System.out.println("=)=)=)=)=)=)=)=)rs: "+rs.getBusStop()+rs.getStatus()+rs.getLatitude());
+            //System.out.println("=)=)=)=)=)=)=)=)rs: "+rs.getBusStop()+rs.getStatus()+rs.getLatitude());
             if(rs.getStatus().equalsIgnoreCase("PENDIENTE")) {
                 distanceBetween(rs.getLatitude(), rs.getLongitude(), location.getLatitude(), location.getLongitude(), distance);
 
@@ -168,11 +172,45 @@ public class GPSTracker extends Service implements LocationListener {
 
                 if (distance[0] <= routeStopMinDistance) {
                     System.out.println("arribando a: " + rs.getBusStop());
+
                     //TODO: Llamar a los métodos de RouteStopListActivity.java:124-170 para actualizar el seatstate
                     //TODO: No haría falta con el nuevo método de occupiedSeats ya implementado en cliente (pasarlo a trip)
 
                     rs.setStatus("ARRIBADO");
 
+                    // =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+                    standingCurrent = sharedPreferences.getInt("standingCurrent", 0);
+
+                    try {
+                        String ticketsREST = getString(R.string.URLupdateTickets,
+                                getString(R.string.URL_REST_API),
+                                getString(R.string.tenantId),
+                                "ROUTESTOP",
+                                onCourseJourney,
+                                rs.getBusStop().replace(" ", "+"));
+
+                        AsyncTask<Void, Void, JSONObject> updTicketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
+                        JSONObject updTicketsData = updTicketsResult.get();
+                        JSONArray ticketsArray = new JSONArray(updTicketsData.getString("data"));
+
+                        for (int k = 0; k < ticketsArray.length(); k++) {
+                            if (ticketsArray.getJSONObject(k).getJSONObject("getsOff").getString("name")
+                                    .equalsIgnoreCase(rs.getBusStop())) {
+                                if( ticketsArray.getJSONObject(k).getInt("seat") == 999) {
+                                    standingCurrent--;
+                                }
+                            }
+                        }
+
+                        editor.putInt("standingCurrent", standingCurrent);
+                        editor.apply();
+
+                    } catch (JSONException | ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    // =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+
+                    //NOTIFICATION
                     NotificationCompat.Builder mBuilder =
                             new NotificationCompat.Builder(mContext)
                                     .setSmallIcon(R.drawable.bus_stop_sign)

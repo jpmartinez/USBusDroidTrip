@@ -34,6 +34,7 @@ public class NewTicketActivity extends AppCompatActivity {
     private int lastSelectedPosition = -1;
     private int lastSelectedSeat = -1;
     private static ArrayList<Integer> occupied;
+    private static ArrayList<Integer> booked;
 
     public class MyAdapter extends BaseAdapter {
 
@@ -134,6 +135,7 @@ public class NewTicketActivity extends AppCompatActivity {
     ImageButton standingPassengerButton;
     TextView standingPassengerTV;
     private Integer standingCurrent;
+    private JSONArray bookingsJSONArray;
     private String token;
     private Intent father;
     private JSONObject journeyJSON;
@@ -158,16 +160,18 @@ public class NewTicketActivity extends AppCompatActivity {
 
             JSONArray occupiedJSONArray;
             journeyJSON = new JSONObject(father.getStringExtra("journey"));
+            bookingsJSONArray = new JSONArray(father.getStringExtra("bookedSeats"));
 
             standingMax = journeyJSON.getJSONObject("bus").getInt("standingPassengers");
             nbrOfSeats = journeyJSON.getJSONObject("bus").getInt("seats");
             standingPassengerTV.setText(Integer.toString(standingMax - standingCurrent));
 
-            if (!journeyJSON.isNull("seatsState") && journeyJSON.getJSONArray("seatsState").length() > 0) {
-                occupiedJSONArray = journeyJSON.getJSONArray("seatsState");
-            } else {
-                occupiedJSONArray = new JSONArray();
-            }
+            occupiedJSONArray = new JSONArray(father.getStringExtra("soldSeats"));
+//            if (!journeyJSON.isNull("seatsState") && journeyJSON.getJSONArray("seatsState").length() > 0) {
+//                occupiedJSONArray = journeyJSON.getJSONArray("seatsState");
+//            } else {
+//                occupiedJSONArray = new JSONArray();
+//            }
 
             occupied = new ArrayList<>();
             Integer occupiedSeat;
@@ -182,6 +186,16 @@ public class NewTicketActivity extends AppCompatActivity {
                     occupied.add(occupiedPosition);
                 }
             }
+
+            booked = new ArrayList<>();
+            Integer bookedSeat;
+            Integer bookedPosition;
+            for (int k = 0; k < bookingsJSONArray.length(); k++) {
+                bookedSeat = bookingsJSONArray.getJSONObject(k).getInt("number");
+                bookedPosition = seat2Position(bookedSeat);
+                booked.add(bookedPosition);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -260,6 +274,8 @@ public class NewTicketActivity extends AppCompatActivity {
                     confirmIntent.putExtra("ticketPrice", father.getStringExtra("ticketPrice"));
                     confirmIntent.putExtra("origin", father.getStringExtra("origin"));
                     confirmIntent.putExtra("destination", father.getStringExtra("destination"));
+                    confirmIntent.putExtra("originKm", father.getDoubleExtra("originKm", 0.0));
+                    confirmIntent.putExtra("destinationKm", father.getDoubleExtra("destinationKm", 0.0));
                     startActivity(confirmIntent);
 
 //                    Intent busStopSelectionIntent = new Intent(getBaseContext(), NTBusStopSelectionActivity.class);

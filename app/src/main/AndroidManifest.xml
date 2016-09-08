@@ -26,8 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.MainActivity"
-            android:label="Main Activity Title"/>
+        <activity
+            android:name=".Activities.MainActivity"
+            android:label="Main Activity Title" />
         <activity android:name=".Activities.Tickets.TicketOptionsActivity" />
         <activity android:name=".Activities.Trip.TripOptionsActivity" />
         <activity android:name=".Activities.Tickets.ScanTicket.ScanTicketActivity" />
@@ -43,7 +44,11 @@
         <activity android:name=".Activities.Tickets.CancelTicket.CancelTicketListActivity" />
         <activity android:name=".Activities.Tickets.PrintTicket.PrintTicketListActivity" />
         <activity android:name=".Activities.Tickets.PrintTicket.PTConfirmationActivity" />
-        <activity android:name=".Helpers.SettingsActivity"></activity>
+        <activity android:name=".Helpers.SettingsActivity" />
+        <activity android:name=".Activities.Parcel.ParcelOptionsActivity" />
+        <activity android:name=".Activities.Parcel.JourneyParcels.JourneyParcelsListActivity" />
+        <activity android:name=".Activities.Parcel.RouteStopParcels.RPParcelListActivity"></activity>
+        <activity android:name=".Activities.Parcel.RouteStopParcels.RPRouteStopListActivity"></activity>
     </application>
 
 </manifest>

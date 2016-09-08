@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:orientation="horizontal">
+
+    <!-- ID Label -->
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:id="@+id/parcelIV"
+        android:src="@drawable/parcel_list_item"
+        android:scaleType="fitCenter"
+        android:tint="#3e2525" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="bottom"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/parcelIdLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/routeStopStatusTV"
+                android:text="ID: "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#0c1248"
+                android:textSize="22dp" />
+
+            <TextView
+                android:id="@+id/parcelIdTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#0c1248"
+                android:text="123"
+                android:textSize="22dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="bottom"
+            android:layout_marginTop="8dp" >
+
+            <TextView
+                android:id="@+id/dimensionLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/routeStopStatusTV"
+                android:text="Dimensiones: "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#0c1248"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/dimensionTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#0c1248"
+                android:text="50 x 50 x 25"
+                android:textSize="17dp"
+                android:scrollIndicators="end" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="bottom"
+            android:layout_marginTop="8dp" >
+
+            <TextView
+                android:id="@+id/weightLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/routeStopStatusTV"
+                android:text="Peso: "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#0c1248"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/weightTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#0c1248"
+                android:text="744"
+                android:textSize="20dp"
+                android:scrollIndicators="end" />
+
+            <TextView
+                android:id="@+id/weightUnitLbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/routeStopStatusTV"
+                android:text=" gr."
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#0c1248"
+                android:textSize="20dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +51,7 @@ public class SetOdometerActivity extends AppCompatActivity {
 
 //        odometerET.enable
         odometerET.setFocusableInTouchMode(true);
+        odometerET.setKeyListener(new DigitsKeyListener());
 
         odometerBtn.setOnClickListener(new View.OnClickListener() {
             @Override

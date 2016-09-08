@@ -29,6 +29,7 @@ import tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.R;
 public class TripOptionsActivity extends AppCompatActivity {
 
     private String onCourseJourney;
+    private String username;
     private Boolean odometerSet;
     private String journeysREST;
     private String getJourneyREST;
@@ -45,6 +46,7 @@ public class TripOptionsActivity extends AppCompatActivity {
         editor = sharedPreferences.edit();
         onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
         odometerSet = sharedPreferences.getBoolean("odometerSet", false);
+        username = sharedPreferences.getString("username", "");
 
         ImageButton startTripBt = (ImageButton) findViewById(R.id.startTripBtn);
         ImageButton endTripBt = (ImageButton) findViewById(R.id.endTripBtn);
@@ -61,17 +63,16 @@ public class TripOptionsActivity extends AppCompatActivity {
                     journeysREST = getString(R.string.URLjourneys,
                             getString(R.string.URL_REST_API),
                             getString(R.string.tenantId),
-                            "DATE_STATUS",
-                            date_today,
-                            JourneyStatus.ACTIVE);
+                            "USERNAME",
+                            username);
 
                     AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), journeysREST, "GET", null).execute();
                     try {
                         JSONObject journeyData = journeyResult.get();
-
+                        JSONObject journeysObject = new JSONObject(journeyData.get("data").toString());
 
                         Intent startTripIntent = new Intent(getApplicationContext(), StartTripActivity.class);
-                        startTripIntent.putExtra("journeys", journeyData.get("data").toString());
+                        startTripIntent.putExtra("journeys", journeysObject.get("asAssistant").toString());
                         startActivity(startTripIntent);
 
                     } catch (InterruptedException | ExecutionException | JSONException e) {
@@ -119,19 +120,10 @@ public class TripOptionsActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), R.string.no_open_trip, Toast.LENGTH_LONG).show();
                 } else {
                     try {
-                        ticketsREST = getString(R.string.URLgetTickets,
-                                getString(R.string.URL_REST_API),
-                                getString(R.string.tenantId),
-                                onCourseJourney );
-
                         getJourneyREST = getString(R.string.URLgetJourney,
                                 getString(R.string.URL_REST_API),
                                 getString(R.string.tenantId),
                                 onCourseJourney);
-
-                        AsyncTask<Void, Void, JSONObject> ticketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
-                        JSONObject ticketsData = ticketsResult.get();
-                        editor.putString("ticketsArray", ticketsData.get("data").toString());
 
                         AsyncTask<Void, Void, JSONObject> thisJourneyResult = new RestCallAsync(getApplicationContext(), getJourneyREST, "GET", null).execute();
                         JSONObject thisJourneyData = thisJourneyResult.get();

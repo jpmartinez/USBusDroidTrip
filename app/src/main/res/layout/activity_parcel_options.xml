@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".Activities.MainActivity">
+    tools:context="tecnoinf.proyecto.grupo4.usbusdroid3.usbusdroidtrip.Activities.Parcel.ParcelOptionsActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -19,34 +19,25 @@
         <ImageButton
             android:layout_width="126dp"
             android:layout_height="126dp"
-            android:id="@+id/ticketOptionsButton"
-            android:src="@drawable/ticket_options"
-            android:clickable="true"
-            android:scaleType="fitCenter"
+            android:id="@+id/parcelsListBtn"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
-            android:background="@null" />
+            android:background="@null"
+            android:src="@drawable/parcel_list"
+            android:scaleType="fitCenter" />
 
         <ImageButton
             android:layout_width="126dp"
             android:layout_height="126dp"
-            android:id="@+id/parcelOptionsButton"
-            android:src="@drawable/parcel_options"
+            android:id="@+id/parcelsByStopBtn"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:scaleType="fitCenter"
+            android:layout_marginTop="40dp"
             android:background="@null"
-            android:layout_marginTop="30dp" />
-
-        <ImageButton
-            android:layout_width="126dp"
-            android:layout_height="126dp"
-            android:id="@+id/tripOptionsButton"
-            android:src="@drawable/trip_options"
-            android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:scaleType="fitCenter"
-            android:background="@null"
-            android:layout_marginTop="30dp" />
-
+            android:src="@drawable/parcel_unload"
+            android:scaleType="fitCenter" />
     </LinearLayout>
+
 </RelativeLayout>

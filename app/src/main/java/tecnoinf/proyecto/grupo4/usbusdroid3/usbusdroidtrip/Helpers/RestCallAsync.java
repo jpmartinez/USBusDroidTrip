@@ -181,7 +181,11 @@ public class RestCallAsync extends AsyncTask<Void, Void, JSONObject> {
 
         JSONObject credentials = new JSONObject();
         credentials.put("username", saved_username);
-        credentials.put("tenantId", mCtx.getString(R.string.tenantId));
+        if(saved_tenantId.isEmpty()) {
+            credentials.put("tenantId", mCtx.getString(R.string.tenantId));
+        } else {
+            credentials.put("tenantId", saved_tenantId);
+        }
         credentials.put("password", saved_password);
         RestCall call = new RestCall(loginURL, "POST", credentials, null);
         JSONObject result = call.getData();

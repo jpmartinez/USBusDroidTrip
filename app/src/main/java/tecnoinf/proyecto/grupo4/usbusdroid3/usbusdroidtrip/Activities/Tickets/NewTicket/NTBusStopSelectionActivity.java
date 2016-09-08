@@ -29,18 +29,21 @@ public class NTBusStopSelectionActivity extends AppCompatActivity {
     private String ticketPriceRest;
     private String occupiedSeatsRest;
     private JSONObject journey;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ntbus_stop_selection);
         final Intent father = getIntent();
+        sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
 
         //final String selectedSeat = father.getStringExtra("seat");
 
         try {
             journey = new JSONObject(father.getStringExtra("journey"));
-            JSONArray routeStops = journey.getJSONObject("service").getJSONObject("route").getJSONArray("busStops");
+            //JSONArray routeStops = journey.getJSONObject("service").getJSONObject("route").getJSONArray("busStops");
+            JSONArray routeStops = new JSONArray(sharedPreferences.getString("routeStops", "[]"));
 
             final List<RouteStop> routeStopList = RouteStop.fromJson(routeStops);
             //ArrayList<String> routeStopsNames = new ArrayList<>();
@@ -50,11 +53,11 @@ public class NTBusStopSelectionActivity extends AppCompatActivity {
 //                routeStopsNames.add(rs.getBusStop());
 //            }
             for(int i = 0; i < routeStopList.size(); i++) {
-                if(i > 0) {
-                    routeStopsNamesTo.add(routeStopList.get(i).getBusStop());
-                }
                 if(i < routeStopList.size() - 1) {
                     routeStopsNamesFrom.add(routeStopList.get(i).getBusStop());
+                }
+                if(i > 0) {
+                    routeStopsNamesTo.add(routeStopList.get(i).getBusStop());
                 }
             }
 
@@ -122,6 +125,13 @@ public class NTBusStopSelectionActivity extends AppCompatActivity {
                             JSONArray soldSeats = occupiedSeats.getJSONArray("sold");
                             JSONArray bookedSeats = occupiedSeats.getJSONArray("booked");
                             //En realidad no deberían haber booked seats, ya que durante el viaje todos ya vencieron
+
+//                            int standingCurrent = 0;
+//                            for(int i = 0; i < soldSeats.length(); i++) {
+//                                if(soldSeats.getJSONObject(i).getInt("seat") == 999) {
+//                                    standingCurrent++;
+//                                }
+//                            }
 
                             Intent selectSeatIntent = new Intent(v.getContext(), NewTicketActivity.class);
                             selectSeatIntent.putExtra("soldSeats", soldSeats.toString());

@@ -77,13 +77,21 @@ public class STResultActivity extends AppCompatActivity {
                             .getJSONObject(i)
                             .put("status", "PENDIENTE");
                 }
+                journey.getJSONObject("service")
+                        .getJSONObject("route")
+                        .getJSONArray("busStops")
+                        .getJSONObject(0)
+                        .put("status", "PARTIÓ");
+
                 //Remuevo origen para que no aparezca en el listado de paradas
-                journey.getJSONObject("service").getJSONObject("route").getJSONArray("busStops").remove(0);
+                //journey.getJSONObject("service").getJSONObject("route").getJSONArray("busStops").remove(0);
 
                 editor.putString("routeStops", journey
                                                 .getJSONObject("service")
                                                 .getJSONObject("route")
                                                 .getJSONArray("busStops").toString());
+                editor.putInt("standingPassengers", journey.getJSONObject("bus").getInt("standingPassengers"));
+
                 editor.apply();
                 success = true;
 

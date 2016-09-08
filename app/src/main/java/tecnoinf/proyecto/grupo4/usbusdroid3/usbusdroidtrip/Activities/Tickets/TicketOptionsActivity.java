@@ -113,7 +113,9 @@ public class TicketOptionsActivity extends AppCompatActivity {
                         ticketsREST = getString(R.string.URLgetTickets,
                                 getString(R.string.URL_REST_API),
                                 getString(R.string.tenantId),
-                                onCourseJourney);
+                                "JOURNEY",
+                                onCourseJourney,
+                                "CONFIRMED");
 
                         AsyncTask<Void, Void, JSONObject> ticketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
                         JSONObject ticketsData = ticketsResult.get();
@@ -154,7 +156,9 @@ public class TicketOptionsActivity extends AppCompatActivity {
                         ticketsREST = getString(R.string.URLgetTickets,
                                 getString(R.string.URL_REST_API),
                                 getString(R.string.tenantId),
-                                onCourseJourney);
+                                "JOURNEY",
+                                onCourseJourney,
+                                "INUSE");
 
                         AsyncTask<Void, Void, JSONObject> ticketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
                         JSONObject ticketsData = ticketsResult.get();

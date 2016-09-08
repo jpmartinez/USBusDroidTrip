@@ -85,7 +85,8 @@ public class RouteStopListActivity extends ListActivity {
                     public View getView (int position, View convertView, ViewGroup parent) {
                         View view = super.getView(position, convertView, parent);
 
-                        if(((TextView)view.findViewById(R.id.routeStopStatusTV)).getText().toString().equalsIgnoreCase("ARRIBADO")) {
+                        if(((TextView)view.findViewById(R.id.routeStopStatusTV)).getText().toString().equalsIgnoreCase("ARRIBADO") ||
+                                ((TextView)view.findViewById(R.id.routeStopStatusTV)).getText().toString().equalsIgnoreCase("PARTIÓ")) {
                             view.findViewById(R.id.routeStopCheckIV).setVisibility(View.VISIBLE);
                             view.setLongClickable(false);
                             view.setEnabled(false);
@@ -100,8 +101,10 @@ public class RouteStopListActivity extends ListActivity {
 
                     @Override
                     public boolean isEnabled(int position) {
-                        return !((TextView) this.getView(position, null, null).findViewById(R.id.routeStopStatusTV))
-                                .getText().toString().equalsIgnoreCase("ARRIBADO");
+                        return !(((TextView) this.getView(position, null, null).findViewById(R.id.routeStopStatusTV))
+                                .getText().toString().equalsIgnoreCase("ARRIBADO")
+                        || ((TextView) this.getView(position, null, null).findViewById(R.id.routeStopStatusTV))
+                                .getText().toString().equalsIgnoreCase("PARTIÓ"));
                     }
                 };
 
@@ -127,7 +130,20 @@ public class RouteStopListActivity extends ListActivity {
                         statusTV.setText("ARRIBADO");
                         ImageView checkIV = (ImageView) view.findViewById(R.id.routeStopCheckIV);
                         checkIV.setVisibility(View.VISIBLE);
+
                         try {
+                            String ticketsREST = getString(R.string.URLupdateTickets,
+                                    getString(R.string.URL_REST_API),
+                                    getString(R.string.tenantId),
+                                    "ROUTESTOP",
+                                    onCourseJourney,
+                                    selectedBusStop.replace(" ", "+"));
+
+                            AsyncTask<Void, Void, JSONObject> updTicketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
+                            JSONObject updTicketsData = updTicketsResult.get();
+                            JSONArray updatedTickets = new JSONArray(updTicketsData.getString("data"));
+                            ticketsArray = updatedTickets;
+
                             routeStops.getJSONObject(position+1).put("status", "ARRIBADO");
                             editor.putString("routeStops", routeStops.toString());
                             editor.apply();
@@ -137,12 +153,12 @@ public class RouteStopListActivity extends ListActivity {
                                     getString(R.string.tenantId),
                                     onCourseJourney);
 
-                            JSONArray updatedSeatState;
-                            if (!journey.isNull("seatsState")) {
-                                updatedSeatState = new JSONArray(journey.get("seatsState").toString());
-                            } else {
-                                updatedSeatState = new JSONArray();
-                            }
+//                            JSONArray updatedSeatState;
+//                            if (!journey.isNull("seatsState")) {
+//                                updatedSeatState = new JSONArray(journey.get("seatsState").toString());
+//                            } else {
+//                                updatedSeatState = new JSONArray();
+//                            }
 
                             //Tomo solo los tickets que NO terminan en esta parada (para ser enviados al journey REST)
                             for (int k = 0; k < ticketsArray.length(); k++) {
@@ -150,26 +166,46 @@ public class RouteStopListActivity extends ListActivity {
                                         .equalsIgnoreCase(selectedBusStop)) {
                                     if( ticketsArray.getJSONObject(k).getInt("seat") == 999) {
                                         standingCurrent--;
-                                    } else {
-                                        for (int j = 0; j < updatedSeatState.length(); j++) {
-                                            if (updatedSeatState.getJSONObject(j).getInt("number")
-                                                    == ticketsArray.getJSONObject(k).getInt("seat")) {
-                                                updatedSeatState.remove(j);
-                                            }
-                                        }
                                     }
+//                                    else {
+//                                        for (int j = 0; j < updatedSeatState.length(); j++) {
+//                                            if (updatedSeatState.getJSONObject(j).getInt("number")
+//                                                    == ticketsArray.getJSONObject(k).getInt("seat")) {
+//                                                updatedSeatState.remove(j);
+//                                            }
+//                                        }
+//                                    }
                                 }
                             }
 
                             editor.putInt("standingCurrent", standingCurrent);
                             editor.apply();
 
-                            JSONObject patchData = new JSONObject();
-                            patchData.put("seatsState", updatedSeatState);
-                            AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), updateJourneyREST, "PATCH", patchData).execute();
-                            JSONObject journeyData = journeyResult.get();
+//                            JSONObject seatStatePatchData = new JSONObject();
+//                            seatStatePatchData.put("seatsState", updatedSeatState);
+//                            AsyncTask<Void, Void, JSONObject> journeyResult = new RestCallAsync(getApplicationContext(), updateJourneyREST, "PATCH", seatStatePatchData).execute();
+//                            JSONObject journeyData = journeyResult.get();
 
-                            System.out.println(journeyData);
+//                            for (int i = 0; i < ticketsArray.length(); i++) {
+//                                if (ticketsArray.getJSONObject(i).getJSONObject("getsOff").getString("name").equalsIgnoreCase(selectedBusStop)) {
+//                                    String patchTicketREST = getString(R.string.URLpatchTicket,
+//                                            getString(R.string.URL_REST_API),
+//                                            getString(R.string.tenantId),
+//                                            ticketsArray.getJSONObject(i).getLong("id"));
+//
+//                                    JSONObject ticketPatchData = new JSONObject();
+//                                    ticketPatchData.put("status", "USED");
+//                                    AsyncTask<Void, Void, JSONObject> ticketResult = new RestCallAsync(getApplicationContext(), patchTicketREST, "PATCH", ticketPatchData).execute();
+//                                }
+//                            }
+
+//                            JSONObject ticketsPatchData = new JSONObject();
+//                            ticketsPatchData.put("seatsState", updatedSeatState);
+//                            AsyncTask<Void, Void, JSONObject> ticketsResult = new RestCallAsync(getApplicationContext(), updateJourneyREST, "PATCH", ticketsPatchData).execute();
+//                            JSONObject ticketsData = journeyResult.get();
+
+
+//                            System.out.println(journeyData);
 
                         } catch (JSONException | ExecutionException | InterruptedException e) {
                             e.printStackTrace();

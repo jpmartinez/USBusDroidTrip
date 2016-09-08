@@ -56,6 +56,8 @@ public class CTConfirmationActivity extends AppCompatActivity {
                 editor.putString("journey", "");
                 editor.putString("busId", "");
                 editor.putString("journeyId", "");
+                editor.putInt("standingPassengers", 0);
+                editor.putInt("standingCurrent", 0);
                 editor.apply();
 
                 Intent resultIntent = new Intent(getBaseContext(), MainActivity.class);
