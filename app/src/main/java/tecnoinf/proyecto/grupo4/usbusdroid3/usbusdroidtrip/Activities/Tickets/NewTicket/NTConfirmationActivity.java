@@ -53,6 +53,7 @@ public class NTConfirmationActivity extends AppCompatActivity {
     private Integer WIDTH;
     private Integer HEIGHT;
     private SharedPreferences.Editor editor;
+    private String tenantId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class NTConfirmationActivity extends AppCompatActivity {
         buyTicketRest = getString(R.string.URLbuyTicket, getString(R.string.URL_REST_API), getString(R.string.tenantId));
         username = sharedPreferences.getString("username", "");
         standingCurrent = sharedPreferences.getInt("standingCurrent", 0);
+        tenantId = sharedPreferences.getString("tenantId", "");
 
         String selectedSeat = father.getStringExtra("seat");
         paymentAmount = father.getStringExtra("ticketPrice");
@@ -112,7 +114,7 @@ public class NTConfirmationActivity extends AppCompatActivity {
                 newTicket = new JSONObject();
                 //journeyId, getOnStopName, getOffStopName, passengerName, seat, closed (true)
                 try {
-                    newTicket.put("tenantId", getString(R.string.tenantId));
+                    newTicket.put("tenantId", tenantId);
                     newTicket.put("journeyId", journey.get("id"));
                     newTicket.put("hasCombination", false);
                     newTicket.put("combination", null);

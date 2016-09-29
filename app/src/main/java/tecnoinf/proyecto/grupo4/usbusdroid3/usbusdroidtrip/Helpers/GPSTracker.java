@@ -48,7 +48,7 @@ public class GPSTracker extends Service implements LocationListener {
     private Double routeStopMinDistance = 5.0;
     private final int routeStopNotificationId = 142;
     private String onCourseJourney;
-    private Integer standingCurrent;
+    private Integer standingCurrent=0;
 
     // flag for GPS status
     boolean isGPSEnabled = false;
@@ -159,6 +159,9 @@ public class GPSTracker extends Service implements LocationListener {
         double prevLat = Double.parseDouble(sharedPreferences.getString("prevLat", "0.0"));
         double prevLng = Double.parseDouble(sharedPreferences.getString("prevLng", "0.0"));
 
+        System.out.println("prevLat:"+prevLat);
+        System.out.println("prevLng:"+prevLng);
+
         //double distance = distance(prevLat, prevLng, location.getLatitude(), location.getLongitude());
         float[] distance = new float[1];
 
@@ -168,9 +171,11 @@ public class GPSTracker extends Service implements LocationListener {
             if(rs.getStatus().equalsIgnoreCase("PENDIENTE")) {
                 distanceBetween(rs.getLatitude(), rs.getLongitude(), location.getLatitude(), location.getLongitude(), distance);
 
-                System.out.println("distance to " + rs.getBusStop() + " :" + String.valueOf(distance[0]/1000));
+                System.out.println(rs.getBusStop() + "Lat|Lng: " + rs.getLatitude() + "|" + rs.getLongitude());
+                System.out.println("location Lat|Lng: " + location.getLatitude() + "|" + location.getLongitude());
+                System.out.println("distance to " + rs.getBusStop() + ": " + String.valueOf(distance[0]/1000));
 
-                if (distance[0] <= routeStopMinDistance) {
+                if (distance[0]/1000 <= routeStopMinDistance) {
                     System.out.println("arribando a: " + rs.getBusStop());
 
                     //TODO: Llamar a los métodos de RouteStopListActivity.java:124-170 para actualizar el seatstate
@@ -180,16 +185,17 @@ public class GPSTracker extends Service implements LocationListener {
 
                     // =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
                     standingCurrent = sharedPreferences.getInt("standingCurrent", 0);
+                    //Integer standingTotal = sharedPreferences.getInt("standingTotal", 0);
 
                     try {
-                        String ticketsREST = getString(R.string.URLupdateTickets,
-                                getString(R.string.URL_REST_API),
-                                getString(R.string.tenantId),
+                        String ticketsREST = mContext.getString(R.string.URLupdateTickets,
+                                mContext.getString(R.string.URL_REST_API),
+                                mContext.getString(R.string.tenantId),
                                 "ROUTESTOP",
                                 onCourseJourney,
                                 rs.getBusStop().replace(" ", "+"));
 
-                        AsyncTask<Void, Void, JSONObject> updTicketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
+                        AsyncTask<Void, Void, JSONObject> updTicketsResult = new RestCallAsync(mContext, ticketsREST, "GET", null).execute();
                         JSONObject updTicketsData = updTicketsResult.get();
                         JSONArray ticketsArray = new JSONArray(updTicketsData.getString("data"));
 
@@ -217,7 +223,8 @@ public class GPSTracker extends Service implements LocationListener {
                                     .setWhen(System.currentTimeMillis())
                                     .setTicker("Llegando a " + rs.getBusStop() + "!!!")
                                     .setContentTitle("Próxima Parada a 5Km !")
-                                    .setContentText("Arribando a " + rs.getBusStop());
+                                    .setContentText("Arribando a " + rs.getBusStop())
+                                    .setAutoCancel(true);
                     // Creates an explicit intent for an Activity in your app
                     Intent resultIntent = new Intent(mContext, RouteStopListActivity.class);
 
@@ -237,17 +244,18 @@ public class GPSTracker extends Service implements LocationListener {
                                     0,
                                     PendingIntent.FLAG_UPDATE_CURRENT
                             );
+
                     mBuilder.setContentIntent(resultPendingIntent);
                     NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
                     // mId allows you to update the notification later on.
                     mNotificationManager.notify(routeStopNotificationId, mBuilder.build());
 
                     //TODO: guardar las routeStops con status actualizado en sharedPreferences, para verlas bien en RouteStopListActivity
-                    //TODO: verificar que en RouteStopListActivity se estén tomando de las shared preferences (o tomarlas y si es "" usar las del journey)
+                    //TODO: verificar que en RouteStopListActivity se esten tomando de las shared preferences (o tomarlas y si es "" usar las del journey)
 
                     try {
                         JSONArray jsonArray = new JSONArray();
-                        jsonArray.put(routeStops.get(0).getJSONObject());
+                        //jsonArray.put(routeStops.get(0).getJSONObject());
                         for (int i=0; i < routeStops.size(); i++) {
                             jsonArray.put(routeStops.get(i).getJSONObject());
                         }

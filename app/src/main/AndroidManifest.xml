@@ -28,27 +28,27 @@
         </activity>
         <activity
             android:name=".Activities.MainActivity"
-            android:label="Main Activity Title" />
-        <activity android:name=".Activities.Tickets.TicketOptionsActivity" />
-        <activity android:name=".Activities.Trip.TripOptionsActivity" />
-        <activity android:name=".Activities.Tickets.ScanTicket.ScanTicketActivity" />
-        <activity android:name=".Activities.Tickets.ScanTicket.STShowDetailsActivity" />
-        <activity android:name=".Activities.Trip.StartTrip.StartTripActivity" />
-        <activity android:name=".Activities.Trip.StartTrip.STResultActivity" />
-        <activity android:name=".Activities.Trip.CloseTrip.CTConfirmationActivity" />
-        <activity android:name=".Activities.Trip.Odometer.SetOdometerActivity" />
-        <activity android:name=".Activities.Tickets.NewTicket.NewTicketActivity" />
-        <activity android:name=".Activities.Tickets.NewTicket.NTBusStopSelectionActivity" />
-        <activity android:name=".Activities.Tickets.NewTicket.NTConfirmationActivity" />
-        <activity android:name=".Activities.Trip.RouteStop.RouteStopListActivity" />
-        <activity android:name=".Activities.Tickets.CancelTicket.CancelTicketListActivity" />
-        <activity android:name=".Activities.Tickets.PrintTicket.PrintTicketListActivity" />
-        <activity android:name=".Activities.Tickets.PrintTicket.PTConfirmationActivity" />
-        <activity android:name=".Helpers.SettingsActivity" />
-        <activity android:name=".Activities.Parcel.ParcelOptionsActivity" />
-        <activity android:name=".Activities.Parcel.JourneyParcels.JourneyParcelsListActivity" />
-        <activity android:name=".Activities.Parcel.RouteStopParcels.RPParcelListActivity"></activity>
-        <activity android:name=".Activities.Parcel.RouteStopParcels.RPRouteStopListActivity"></activity>
+            android:label="USBus Principal" />
+        <activity android:name=".Activities.Tickets.TicketOptionsActivity" android:label="USBus Pasajes" />
+        <activity android:name=".Activities.Trip.TripOptionsActivity" android:label="USBus Viajes" />
+        <activity android:name=".Activities.Tickets.ScanTicket.ScanTicketActivity" android:label="USBus QR Scan" />
+        <activity android:name=".Activities.Tickets.ScanTicket.STShowDetailsActivity" android:label="USBus Detalles de Pasaje" />
+        <activity android:name=".Activities.Trip.StartTrip.StartTripActivity" android:label="USBus Iniciar Viaje" />
+        <activity android:name=".Activities.Trip.StartTrip.STResultActivity" android:label="USBus Iniciar Viaje" />
+        <activity android:name=".Activities.Trip.CloseTrip.CTConfirmationActivity" android:label="USBus Fin Viaje" />
+        <activity android:name=".Activities.Trip.Odometer.SetOdometerActivity" android:label="USBus Odometro" />
+        <activity android:name=".Activities.Tickets.NewTicket.NewTicketActivity" android:label="USBus Vender Pasaje" />
+        <activity android:name=".Activities.Tickets.NewTicket.NTBusStopSelectionActivity" android:label="USBus Vender Pasaje" />
+        <activity android:name=".Activities.Tickets.NewTicket.NTConfirmationActivity" android:label="USBus Vender Pasaje" />
+        <activity android:name=".Activities.Trip.RouteStop.RouteStopListActivity" android:label="USBus Paradas" />
+        <activity android:name=".Activities.Tickets.CancelTicket.CancelTicketListActivity" android:label="USBus Cancelar Pasaje" />
+        <activity android:name=".Activities.Tickets.PrintTicket.PrintTicketListActivity" android:label="USBus Imprimir Pasaje" />
+        <activity android:name=".Activities.Tickets.PrintTicket.PTConfirmationActivity" android:label="USBus Imprimir Pasaje" />
+        <activity android:name=".Helpers.SettingsActivity" android:label="USBus Parametros" />
+        <activity android:name=".Activities.Parcel.ParcelOptionsActivity" android:label="USBus Encomiendas" />
+        <activity android:name=".Activities.Parcel.JourneyParcels.JourneyParcelsListActivity" android:label="USBus Encomiendas" />
+        <activity android:name=".Activities.Parcel.RouteStopParcels.RPParcelListActivity" android:label="USBus Encomiendas" />
+        <activity android:name=".Activities.Parcel.RouteStopParcels.RPRouteStopListActivity" android:label="USBus Encomiendas" />
     </application>
 
 </manifest>

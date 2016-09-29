@@ -129,6 +129,32 @@ public class TripOptionsActivity extends AppCompatActivity {
                         JSONObject thisJourneyData = thisJourneyResult.get();
                         editor.putString("journey", thisJourneyData.get("data").toString());
 
+                        ticketsREST = getString(R.string.URLgetTickets,
+                                getString(R.string.URL_REST_API),
+                                getString(R.string.tenantId),
+                                "JOURNEY",
+                                onCourseJourney,
+                                "INUSE");
+
+                        AsyncTask<Void, Void, JSONObject> ticketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
+                        JSONObject ticketsData = ticketsResult.get();
+                        JSONArray ticketsArray = new JSONArray(ticketsData.get("data").toString());
+
+                        for(int i = 0; i < ticketsArray.length(); i++) {
+                            if (ticketsArray.getJSONObject(i).getString("status").equalsIgnoreCase("CANCELED")) {
+                                ticketsArray.remove(i);
+                                i--;
+                            }
+                        }
+
+                        if (ticketsArray.length() > 0) {
+                            editor.putString("ticketsArray", ticketsArray.toString());
+                        } else {
+                            editor.putString("ticketsArray", "[]");
+                        }
+
+
+
                         editor.apply();
 
                         Intent routeStopIntent = new Intent(getApplicationContext(), RouteStopListActivity.class);

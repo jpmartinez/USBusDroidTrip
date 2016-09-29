@@ -16,7 +16,7 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="240dp"
+        android:layout_width="230dp"
         android:layout_height="match_parent"
         android:gravity="center_vertical">
 
@@ -110,13 +110,19 @@
                 android:textColor="#0c1248"
                 android:textSize="20dp" />
         </LinearLayout>
-    </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/rpOnDestinationTV"
-        android:visibility="gone" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rpOnDestinationTV"
+            android:visibility="gone"
+            android:text="DESCARGADO"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#1c6800"
+            android:textAlignment="center"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
 
     <ImageView
         android:layout_width="80dp"
@@ -124,6 +130,6 @@
         android:id="@+id/parcelUnloadCheckIV"
         android:src="@drawable/parcel_unload_arrow_check"
         android:tint="#0c6500"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </LinearLayout>

@@ -91,6 +91,7 @@ public class STResultActivity extends AppCompatActivity {
                                                 .getJSONObject("route")
                                                 .getJSONArray("busStops").toString());
                 editor.putInt("standingPassengers", journey.getJSONObject("bus").getInt("standingPassengers"));
+                editor.putInt("standingTotal", journey.getJSONObject("bus").getInt("standingPassengers"));
 
                 editor.apply();
                 success = true;

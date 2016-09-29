@@ -90,11 +90,6 @@ public class TicketOptionsActivity extends AppCompatActivity {
                 selectStopsIntent.putExtra("journey", journeyData.getString("data"));
                 selectStopsIntent.putExtra("standingCurrent", standingCurrent);
                 startActivity(selectStopsIntent);
-//
-//                Intent newTicketIntent = new Intent(getApplicationContext(), NewTicketActivity.class);
-//                newTicketIntent.putExtra("journey", journeyData.getString("data"));
-//                newTicketIntent.putExtra("standingCurrent", standingCurrent);
-//                startActivity(newTicketIntent);
 
             } catch (InterruptedException | ExecutionException | JSONException e) {
                 e.printStackTrace();
@@ -115,7 +110,7 @@ public class TicketOptionsActivity extends AppCompatActivity {
                                 getString(R.string.tenantId),
                                 "JOURNEY",
                                 onCourseJourney,
-                                "CONFIRMED");
+                                "INUSE");
 
                         AsyncTask<Void, Void, JSONObject> ticketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
                         JSONObject ticketsData = ticketsResult.get();

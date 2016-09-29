@@ -93,21 +93,27 @@ public class ScanTicketActivity extends AppCompatActivity implements View.OnClic
                 if(scanContent != null) {
                     JSONObject ticketScannedData = new JSONObject(scanContent);
                     //TODO: check if ticket is from same tenant
-                    ticketId = ticketScannedData.getString("id");
+                    if(ticketScannedData.has("id") && ticketScannedData.has("tenantId")) {
+                        ticketId = ticketScannedData.getString("id");
 
-                    getTicketREST = getString(R.string.URLgetTicket,
-                            getString(R.string.URL_REST_API),
-                            getString(R.string.tenantId),
-                            ticketId);
+                        getTicketREST = getString(R.string.URLgetTicket,
+                                getString(R.string.URL_REST_API),
+                                getString(R.string.tenantId),
+                                ticketId);
 
-                    Intent ticketDetailsIntent = new Intent(this, STShowDetailsActivity.class);
-                    AsyncTask<Void, Void, JSONObject> ticketResult = new RestCallAsync(getApplicationContext(), getTicketREST, "GET", null).execute();
-                    JSONObject ticketData = ticketResult.get();
-                    //TODO: ver si el result es OK y ahí llamar al siguiente activity, caso contrario mostrar error correspondiente
-                    JSONObject ticketJSON = new JSONObject(ticketData.getString("data"));
+                        Intent ticketDetailsIntent = new Intent(this, STShowDetailsActivity.class);
+                        AsyncTask<Void, Void, JSONObject> ticketResult = new RestCallAsync(getApplicationContext(), getTicketREST, "GET", null).execute();
+                        JSONObject ticketData = ticketResult.get();
+                        //TODO: ver si el result es OK y ahí llamar al siguiente activity, caso contrario mostrar error correspondiente
+                        JSONObject ticketJSON = new JSONObject(ticketData.getString("data"));
 
-                    ticketDetailsIntent.putExtra("ticket", ticketJSON.toString());
-                    startActivity(ticketDetailsIntent);
+                        ticketDetailsIntent.putExtra("ticket", ticketJSON.toString());
+                        startActivity(ticketDetailsIntent);
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(),
+                                "Pasaje inválido", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
                 }
             } catch (JSONException | ExecutionException | InterruptedException e) {
                 e.printStackTrace();

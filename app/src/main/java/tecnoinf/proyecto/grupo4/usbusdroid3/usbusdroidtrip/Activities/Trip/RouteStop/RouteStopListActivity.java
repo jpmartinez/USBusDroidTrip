@@ -142,7 +142,7 @@ public class RouteStopListActivity extends ListActivity {
                             AsyncTask<Void, Void, JSONObject> updTicketsResult = new RestCallAsync(getApplicationContext(), ticketsREST, "GET", null).execute();
                             JSONObject updTicketsData = updTicketsResult.get();
                             JSONArray updatedTickets = new JSONArray(updTicketsData.getString("data"));
-                            ticketsArray = updatedTickets;
+                            //ticketsArray = updatedTickets;
 
                             routeStops.getJSONObject(position+1).put("status", "ARRIBADO");
                             editor.putString("routeStops", routeStops.toString());
@@ -178,6 +178,7 @@ public class RouteStopListActivity extends ListActivity {
                                 }
                             }
 
+                            editor.putString("ticketsArray", updatedTickets.toString());
                             editor.putInt("standingCurrent", standingCurrent);
                             editor.apply();
 

@@ -209,7 +209,6 @@ public class Parcel {
         }
     }
 
-
     public static ArrayList<Parcel> fromJson(JSONArray jsonObjects) {
         ArrayList<Parcel> routeStops = new ArrayList<>();
         for (int i = 0; i < jsonObjects.length(); i++) {
@@ -221,4 +220,5 @@ public class Parcel {
         }
         return routeStops;
     }
+
 }

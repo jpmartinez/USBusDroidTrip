@@ -28,6 +28,7 @@ public class STShowDetailsActivity extends AppCompatActivity {
     private String ticketId;
     private String confirmTicketREST;
     private String onCourseJourney;
+    private String tenantId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class STShowDetailsActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("USBusData", Context.MODE_PRIVATE);
         onCourseJourney = sharedPreferences.getString("onCourseJourney", "");
+        tenantId = sharedPreferences.getString("tenantId", "");
 
         TextView journeyNameTV = (TextView) findViewById(R.id.journeyNameTV);
         TextView dateTV = (TextView) findViewById(R.id.dateTV);
@@ -48,7 +50,7 @@ public class STShowDetailsActivity extends AppCompatActivity {
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
         try {
             ticket = new JSONObject(father.getStringExtra("ticket"));
-            if(ticket.get("tenantId").toString().equals(getString(R.string.tenantId))){
+            if(ticket.get("tenantId").toString().equals(tenantId)){
                 journeyNameTV.setText(ticket.getJSONObject("journey").getJSONObject("service").getString("name"));
                 dateTV.setText(dateFormat.format(ticket.getJSONObject("journey").get("date")));
                 timeTV.setText(timeFormat.format(ticket.getJSONObject("journey").getJSONObject("service").get("time")));
